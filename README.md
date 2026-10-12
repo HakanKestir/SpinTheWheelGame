@@ -12,8 +12,8 @@
 
 ## 📦 Deliverables & Quick Links
 
-- 📥 **Android APK Release:** [Download Latest APK on GitHub Releases](https://github.com/Hakan0011/WheelOfFortuneDemo/releases/latest)  
-  *(Replace link with your repository URL or download directly from Releases tab)*
+- 📥 **Android APK Release:** [Download Latest APK on GitHub Releases](https://github.com/Hakan0011/WheelOfFortuneDemo/releases/latest)
+- 📦 **Direct APK File:** [`Release.apk`](Release.apk) *(41.8 MB, Android Release build)*
 - 🎬 **Gameplay Video:** [Watch Demonstration](#-gameplay-video-demonstration)
 - 📱 **Multi-Aspect Ratio Support:** [Screenshots (20:9, 16:9, 4:3)](#-responsive-multi-aspect-ratio-support)
 - 🧪 **Editor Test Suite:** [Automated Verification](#-automated-testing--verification)
@@ -22,16 +22,12 @@
 
 ## 🎬 Gameplay Video Demonstration
 
-<!-- ================================================================= -->
-<!-- PLACE YOUR GAMEPLAY VIDEO HERE:                                   -->
-<!-- Recommended: Save your recorded video as docs/media/gameplay_demo.mp4 -->
-<!-- or upload to YouTube/Vimeo and link below.                        -->
-<!-- ================================================================= -->
+[![Watch Gameplay Demonstration](docs/screenshots/wheel_bronze.png)](docs/media/gameplay_demo.mp4)
 
-https://github.com/user-attachments/assets/PLACEHOLDER_VIDEO_ID
+> 🎥 **Direct Video File:** [`docs/media/gameplay_demo.mp4`](docs/media/gameplay_demo.mp4) *(42.5 MB, Full HD)*  
+> *Click the preview thumbnail above or the link to open the video file showing Bronze spins, Safe Zone progression, revive options, and exit banking.*
 
-> 🎥 **Direct Video File:** [`docs/media/gameplay_demo.mp4`](docs/media/gameplay_demo.mp4)  
-> *(If hosting on GitHub, you can drag and drop your `.mp4` into the release or issue comment and paste the URL above).*
+<video src="docs/media/gameplay_demo.mp4" controls width="100%"></video>
 
 ---
 
@@ -39,38 +35,25 @@ https://github.com/user-attachments/assets/PLACEHOLDER_VIDEO_ID
 
 The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode (`m_ScreenMatchMode: 2`), ensuring layout stability, no off-center clipping, and zero black bars across ultra-wide, standard, and tablet displays.
 
-<!-- ================================================================= -->
-<!-- PLACE YOUR ASPECT RATIO SCREENSHOTS HERE:                        -->
-<!-- Drop images into docs/screenshots/ with the following names:       -->
-<!-- - docs/screenshots/aspect_20_9.png                                -->
-<!-- - docs/screenshots/aspect_16_9.png                                -->
-<!-- - docs/screenshots/aspect_4_3.png                                 -->
-<!-- ================================================================= -->
-
 | Ultra-Wide (20:9 / 2400×1080) | Standard (16:9 / 1920×1080) | Tablet / Foldable (4:3 / 2048×1536) |
 | :---: | :---: | :---: |
-| ![20:9 Aspect Ratio](docs/screenshots/aspect_20_9.png) | ![16:9 Aspect Ratio](docs/screenshots/aspect_16_9.png) | ![4:3 Aspect Ratio](docs/screenshots/aspect_4_3.png) |
+| <img src="docs/screenshots/aspect_20_9.png" width="100%" alt="20:9 Aspect Ratio" /> | <img src="docs/screenshots/aspect_16_9.png" width="100%" alt="16:9 Aspect Ratio" /> | <img src="docs/screenshots/aspect_4_3.png" width="100%" alt="4:3 Aspect Ratio" /> |
 | *Modern Android flagships* | *Standard mobile & landscape devices* | *iPads, Android tablets, foldables* |
 
 ---
 
 ## 📸 In-Game Screenshots & Features
 
-<!-- ================================================================= -->
-<!-- ADDITIONAL SCREENSHOTS:                                           -->
-<!-- Drop images into docs/screenshots/ with the following names:       -->
-<!-- ================================================================= -->
-
 ### 1. Wheel Tiers & Zone Progression
 | Standard Bronze Wheel (Zones 1–4, 6–9...) | Safe Zone Silver Wheel (Zones 5, 10, 15...) | Super Zone Golden Wheel (Zone 30, 60...) |
 | :---: | :---: | :---: |
-| ![Bronze Wheel](docs/screenshots/wheel_bronze.png) | ![Silver Safe Wheel](docs/screenshots/wheel_silver_safe.png) | ![Golden Super Wheel](docs/screenshots/wheel_gold_super.png) |
+| <img src="docs/screenshots/wheel_bronze.png" width="100%" alt="Bronze Wheel" /> | <img src="docs/screenshots/wheel_silver_safe.png" width="100%" alt="Silver Safe Wheel" /> | <img src="docs/screenshots/wheel_gold_super.png" width="100%" alt="Golden Super Wheel" /> |
 | *8 Slices: 7 Rewards + 1 Bomb* | *8 Slices: High-tier rewards, 0 Bombs* | *8 Slices: Premium legendary loot, 0 Bombs* |
 
 ### 2. Modals, Economy & Celebrations
 | Exit & Secure Loot Confirmation | Bomb Encounter (Death / Revive) | Winner Celebration Card Popup |
 | :---: | :---: | :---: |
-| ![Exit Modal](docs/screenshots/modal_exit_cashout.png) | ![Bomb Modal](docs/screenshots/modal_bomb.png) | ![Celebration Popup](docs/screenshots/reward_celebration.png) |
+| <img src="docs/screenshots/modal_exit_cashout.png" width="100%" alt="Exit Modal" /> | <img src="docs/screenshots/modal_bomb.png" width="100%" alt="Bomb Modal" /> | <img src="docs/screenshots/reward_celebration.png" width="100%" alt="Celebration Popup" /> |
 | *Side-scrolling tray of banked vault loot* | *Revive via 25 Gold, Bonus Ad, or Give Up* | *Dynamic flying currency particles & punch anim* |
 
 ---
