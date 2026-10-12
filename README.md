@@ -3,7 +3,7 @@
 [![Unity Version](https://img.shields.io/badge/Unity-6000.3.25f1-blue.svg?logo=unity)](https://unity.com/)
 [![Target Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Landscape-brightgreen.svg)]()
 [![Rendering](https://img.shields.io/badge/Render%20Pipeline-URP%202D-informational.svg)]()
-[![Latest Release](https://img.shields.io/badge/Release-Download%20APK-orange.svg)](https://github.com/Hakan0011/WheelOfFortuneDemo/releases/latest)
+[![Latest Release](https://img.shields.io/badge/Release-Download%20APK-orange.svg)](https://github.com/HakanKestir/SpinTheWheelGame/releases/latest)
 
 > **Game Developer Demo — Case Study**  
 > An interactive, responsive, and data-driven **Wheel of Fortune** mobile game inspired by modern card and fortune mini-game mechanics. Developed with modern Unity best practices, clean decoupled architecture, and optimized mobile UI.
@@ -12,7 +12,7 @@
 
 ## 📦 Deliverables & Quick Links
 
-- 📥 **Android APK Release:** [Download Latest APK on GitHub Releases](https://github.com/Hakan0011/WheelOfFortuneDemo/releases/latest)
+- 📥 **Android APK Release:** [Download Latest APK on GitHub Releases](https://github.com/HakanKestir/SpinTheWheelGame/releases/latest)
 - 📦 **Direct APK File:** [`Release.apk`](Release.apk) *(41.8 MB, Android Release build)*
 - 🎬 **Gameplay Video:** [Watch Demonstration](#-gameplay-video-demonstration)
 - 📱 **Multi-Aspect Ratio Support:** [Screenshots (20:9, 16:9, 4:3)](#-responsive-multi-aspect-ratio-support)
