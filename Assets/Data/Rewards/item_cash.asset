@@ -1,0 +1,20 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 982501742cdbc914f8ee0bb6f62995ae, type: 3}
+  m_Name: item_cash
+  m_EditorClassIdentifier: Assembly-CSharp::WheelOfFortune.Data.RewardItemSO
+  id: item_cash
+  displayName: Cash
+  rewardType: 0
+  icon: {fileID: 7347395048315886003, guid: 5e6be3dea8e263846982e52a411fa64d, type: 3}
+  baseAmount: 500
+  isBomb: 0

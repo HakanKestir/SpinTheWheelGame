@@ -1,0 +1,74 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abe401925c707c249af18e7bc0cbe365, type: 3}
+  m_Name: GoldenWheelConfig
+  m_EditorClassIdentifier: Assembly-CSharp::WheelOfFortune.Data.WheelConfigSO
+  tierType: 2
+  wheelBaseSprite: {fileID: 5770997025872212153, guid: 279557658693b934792c262f233d67a4, type: 3}
+  indicatorSprite: {fileID: 8294000708589155680, guid: 1650863ffdd9cfd4e97734aa4ecf9f8d, type: 3}
+  bombRewardItem: {fileID: 0}
+  rewardPool:
+  - rewardItem: {fileID: 11400000, guid: 47531bbc6587ad14f82034b5a4bf3bf5, type: 2}
+    baseAmount: 2500
+    weight: 20
+  - rewardItem: {fileID: 11400000, guid: df14f04937c309c4abeac6dc30447477, type: 2}
+    baseAmount: 50
+    weight: 15
+  - rewardItem: {fileID: 11400000, guid: acd8068215176b646a5234de86560060, type: 2}
+    baseAmount: 1
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: 9fa7e6b9b9b78de4bbf5040918897abd, type: 2}
+    baseAmount: 1
+    weight: 8
+  - rewardItem: {fileID: 11400000, guid: fe40af0b4dd7cd440ad4471dc069c471, type: 2}
+    baseAmount: 1
+    weight: 10
+  - rewardItem: {fileID: 11400000, guid: 3ebec2b27e3a9f9429b22a601f4a8298, type: 2}
+    baseAmount: 1
+    weight: 8
+  - rewardItem: {fileID: 11400000, guid: 267f72b7fbe18ab4180adad6a8424633, type: 2}
+    baseAmount: 1
+    weight: 6
+  - rewardItem: {fileID: 11400000, guid: 163bab60b873df342b631da9f0fd5c90, type: 2}
+    baseAmount: 10
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: 1551fc2d96ff5b0449480b0f76c1cd9a, type: 2}
+    baseAmount: 10
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: c01081c32e52eed4283a64e304db46f7, type: 2}
+    baseAmount: 10
+    weight: 12
+  slices:
+  - rewardItem: {fileID: 11400000, guid: df14f04937c309c4abeac6dc30447477, type: 2}
+    overrideAmount: 50
+    weight: 15
+  - rewardItem: {fileID: 11400000, guid: c01081c32e52eed4283a64e304db46f7, type: 2}
+    overrideAmount: 10
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: 163bab60b873df342b631da9f0fd5c90, type: 2}
+    overrideAmount: 10
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: 3ebec2b27e3a9f9429b22a601f4a8298, type: 2}
+    overrideAmount: 1
+    weight: 8
+  - rewardItem: {fileID: 11400000, guid: acd8068215176b646a5234de86560060, type: 2}
+    overrideAmount: 1
+    weight: 12
+  - rewardItem: {fileID: 11400000, guid: 9fa7e6b9b9b78de4bbf5040918897abd, type: 2}
+    overrideAmount: 1
+    weight: 8
+  - rewardItem: {fileID: 11400000, guid: fe40af0b4dd7cd440ad4471dc069c471, type: 2}
+    overrideAmount: 1
+    weight: 10
+  - rewardItem: {fileID: 11400000, guid: 47531bbc6587ad14f82034b5a4bf3bf5, type: 2}
+    overrideAmount: 2500
+    weight: 20

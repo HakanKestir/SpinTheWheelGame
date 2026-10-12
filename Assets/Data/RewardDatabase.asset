@@ -1,0 +1,35 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a583a91b0e9c5514ea6ce4bad8c92b1c, type: 3}
+  m_Name: RewardDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WheelOfFortune.Data.RewardDatabaseSO
+  allRewards:
+  - {fileID: 11400000, guid: cb84a89759ef70d4186c405d2b624704, type: 2}
+  - {fileID: 11400000, guid: 19fffe108c6e7c844b4c4ba158f3964a, type: 2}
+  - {fileID: 11400000, guid: 47531bbc6587ad14f82034b5a4bf3bf5, type: 2}
+  - {fileID: 11400000, guid: 60c3a1bf94d3f6f428de31c8b9ae85cc, type: 2}
+  - {fileID: 11400000, guid: acd8068215176b646a5234de86560060, type: 2}
+  - {fileID: 11400000, guid: d7ddbd0bffc63be498d443112432afa3, type: 2}
+  - {fileID: 11400000, guid: 9fa7e6b9b9b78de4bbf5040918897abd, type: 2}
+  - {fileID: 11400000, guid: a52ac6040452dfb45adc9b4c08817439, type: 2}
+  - {fileID: 11400000, guid: df14f04937c309c4abeac6dc30447477, type: 2}
+  - {fileID: 11400000, guid: 1551fc2d96ff5b0449480b0f76c1cd9a, type: 2}
+  - {fileID: 11400000, guid: 163bab60b873df342b631da9f0fd5c90, type: 2}
+  - {fileID: 11400000, guid: c01081c32e52eed4283a64e304db46f7, type: 2}
+  - {fileID: 11400000, guid: 378490b02b0361c478267cb174b9b69c, type: 2}
+  - {fileID: 11400000, guid: 267f72b7fbe18ab4180adad6a8424633, type: 2}
+  - {fileID: 11400000, guid: 08e12ae153d3b7449bfefcb2fd9d6747, type: 2}
+  - {fileID: 11400000, guid: fe40af0b4dd7cd440ad4471dc069c471, type: 2}
+  - {fileID: 11400000, guid: 8523eb61f2945514dbb1ee30842db73a, type: 2}
+  - {fileID: 11400000, guid: a8343522e23241741be42213bb9362f5, type: 2}
+  - {fileID: 11400000, guid: e13dfa71c0d927b4b8d47346a10e1a5f, type: 2}
+  - {fileID: 11400000, guid: 3ebec2b27e3a9f9429b22a601f4a8298, type: 2}
