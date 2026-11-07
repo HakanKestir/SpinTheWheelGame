@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -132,18 +132,29 @@ namespace WheelOfFortune.UI.Modals
                 ui_panel_bomb_root.SetActive(true);
             }
 
-            if (ui_text_revive_cost_value != null && gameFlowManager != null)
+            if (gameFlowManager != null)
             {
-                int cost = gameFlowManager.ZoneManager.Config.ReviveGoldCost;
-                ui_text_revive_cost_value.text = cost.ToString();
-
-                // Check affordability
+                int cost = gameFlowManager.CurrentReviveCost;
+                bool canRevive = gameFlowManager.CanReviveInRun;
                 bool canAfford = playerInventoryManager != null && playerInventoryManager.CanAffordGold(cost);
+
+                if (ui_text_revive_cost_value != null)
+                {
+                    ui_text_revive_cost_value.text = canRevive ? cost.ToString() : "MAX";
+                }
+
                 if (ui_button_revive_currency != null)
                 {
-                    ui_button_revive_currency.interactable = canAfford;
+                    ui_button_revive_currency.interactable = canRevive && canAfford;
                 }
             }
+
+#if !DEVELOPMENT_BUILD && !UNITY_EDITOR
+            if (ui_button_revive_bonus != null)
+            {
+                ui_button_revive_bonus.gameObject.SetActive(false);
+            }
+#endif
 
             // Pop-in animation
             if (ui_transform_bomb_modal_anim_container != null)
@@ -162,7 +173,18 @@ namespace WheelOfFortune.UI.Modals
             }
         }
 
-        public void HideModal()
+        private void OnDisable()
+        {
+            KillTweens();
+        }
+
+        protected override void OnDestroy()
+        {
+            KillTweens();
+            base.OnDestroy();
+        }
+
+        private void KillTweens()
         {
             if (ui_transform_bomb_modal_anim_container != null)
             {
@@ -171,7 +193,13 @@ namespace WheelOfFortune.UI.Modals
             if (ui_transform_skull_icon != null)
             {
                 ui_transform_skull_icon.DOKill();
+                ui_transform_skull_icon.localScale = Vector3.one;
             }
+        }
+
+        public void HideModal()
+        {
+            KillTweens();
             if (ui_panel_bomb_root != null)
             {
                 ui_panel_bomb_root.SetActive(false);
