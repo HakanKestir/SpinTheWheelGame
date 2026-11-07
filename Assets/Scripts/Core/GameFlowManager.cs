@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using WheelOfFortune.Data;
@@ -18,6 +18,7 @@ namespace WheelOfFortune.Core
         [SerializeField] private int forceSliceIndex = -1;
 
         private GameState currentState = GameState.ReadyToSpin;
+        private int revivesUsedInRun = 0;
 
         public event Action<GameState> OnStateChanged;
         public event Action<WheelSliceConfig, int> OnRewardWon;
@@ -31,6 +32,15 @@ namespace WheelOfFortune.Core
         public WheelSpinController SpinController => wheelSpinController;
         public ZoneProgressionManager ZoneManager => zoneProgressionManager;
         public PlayerInventoryManager InventoryManager => playerInventoryManager;
+        public int RevivesUsedInRun => revivesUsedInRun;
+        public int MaxRevivesPerRun => zoneProgressionManager != null && zoneProgressionManager.Config != null
+            ? zoneProgressionManager.Config.MaxRevivesPerRun
+            : 3;
+        public int CurrentReviveCost => zoneProgressionManager != null && zoneProgressionManager.Config != null
+            ? zoneProgressionManager.Config.GetReviveCost(revivesUsedInRun)
+            : 25;
+        public bool CanReviveInRun => zoneProgressionManager != null && zoneProgressionManager.Config != null
+            && zoneProgressionManager.Config.CanRevive(revivesUsedInRun);
 
         private void Awake()
         {
@@ -178,9 +188,16 @@ namespace WheelOfFortune.Core
         {
             if (currentState != GameState.BombEncounter) return;
 
-            int cost = zoneProgressionManager.Config.ReviveGoldCost;
+            if (!CanReviveInRun)
+            {
+                Debug.LogWarning("[GameFlowManager] Maximum revives reached for this run!");
+                return;
+            }
+
+            int cost = CurrentReviveCost;
             if (playerInventoryManager.TrySpendGold(cost))
             {
+                revivesUsedInRun++;
                 ExecuteRevive();
             }
             else
@@ -191,15 +208,22 @@ namespace WheelOfFortune.Core
 
         public void RequestReviveBonus()
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
             if (currentState != GameState.BombEncounter) return;
-            // Bonus revive for demo evaluation
+            // Bonus revive for demo evaluation in dev / editor builds
             ExecuteRevive();
+#else
+            Debug.LogWarning("[GameFlowManager] Bonus revive is disabled in release builds.");
+#endif
         }
 
         private void ExecuteRevive()
         {
-            // Revive: keep all collected rewards and advance to next zone
-            zoneProgressionManager.AdvanceZone();
+            // Revive: preserve all collected run rewards and allow re-spinning in the CURRENT zone (never advance)
+            if (wheelSpinController != null)
+            {
+                wheelSpinController.StopImmediate();
+            }
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);
             OnRevived?.Invoke();
@@ -209,7 +233,8 @@ namespace WheelOfFortune.Core
         {
             if (currentState != GameState.BombEncounter) return;
 
-            // Player forfeits all rewards
+            // Player forfeits all rewards and resets progression
+            revivesUsedInRun = 0;
             playerInventoryManager.ClearRunRewards();
             zoneProgressionManager.ResetToStart();
             SetupCurrentZoneWheel();
@@ -237,7 +262,16 @@ namespace WheelOfFortune.Core
         {
             if (currentState != GameState.ReadyToSpin && currentState != GameState.CashOut) return;
 
-            // 1. Bank cash and gold into permanent wallet (other items discarded)
+            // Game flow level validation: strictly forbid exit if outside safe/super zones
+            if (zoneProgressionManager != null && !zoneProgressionManager.CanLeave)
+            {
+                Debug.LogWarning("[GameFlowManager] Cannot cash out outside of safe or super zones!");
+                return;
+            }
+
+            revivesUsedInRun = 0;
+
+            // 1. Bank cash and gold into permanent wallet (and items into vault)
             if (playerInventoryManager != null)
             {
                 playerInventoryManager.BankRewardsToWallet();
