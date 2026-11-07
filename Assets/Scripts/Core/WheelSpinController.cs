@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DG.Tweening;
 using UnityEngine;
 using WheelOfFortune.Data;
@@ -22,7 +22,7 @@ namespace WheelOfFortune.Core
         [SerializeField] private float indicatorTickAngle = 18f;
         [SerializeField] private float indicatorTickDuration = 0.12f;
 
-        private WheelConfigSO currentConfig;
+        private IWheelModel currentModel;
         private int currentZoneMultiplier = 1;
         private bool isSpinning;
         private Tween currentSpinTween;
@@ -33,14 +33,15 @@ namespace WheelOfFortune.Core
         public const float SliceAngle = 360f / WheelConfigSO.SliceCount; // 45 degrees
 
         public bool IsSpinning => isSpinning;
-        public WheelConfigSO CurrentConfig => currentConfig;
+        public IWheelModel CurrentModel => currentModel;
+        public WheelConfigSO CurrentConfig => currentModel as WheelConfigSO;
 
         public event Action<int> OnSlicePassed;
         public event Action<int> OnSpinCompleted;
 
-        public void Initialize(WheelConfigSO config, int zoneMultiplier)
+        public void Initialize(IWheelModel wheelModel, int zoneMultiplier)
         {
-            currentConfig = config;
+            currentModel = wheelModel;
             currentZoneMultiplier = zoneMultiplier;
             isSpinning = false;
 
@@ -52,6 +53,11 @@ namespace WheelOfFortune.Core
             {
                 indicatorTransform.localEulerAngles = Vector3.zero;
             }
+        }
+
+        public void Initialize(WheelConfigSO config, int zoneMultiplier)
+        {
+            Initialize((IWheelModel)config, zoneMultiplier);
         }
 
         public void SpinToSlice(int targetIndex, Action<int> onCompleted = null)

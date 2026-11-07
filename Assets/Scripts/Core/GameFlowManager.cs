@@ -80,24 +80,19 @@ namespace WheelOfFortune.Core
         {
             if (zoneProgressionManager == null || wheelSpinController == null) return;
 
-            var activeConfig = zoneProgressionManager.ActiveWheelConfig;
+            var wheelModel = zoneProgressionManager.ActiveWheelModel;
             int multiplier = zoneProgressionManager.CurrentMultiplier;
 
-            if (activeConfig != null)
-            {
-                activeConfig.RollSlicesForZone(zoneProgressionManager.CurrentZone);
-            }
-
-            wheelSpinController.Initialize(activeConfig, multiplier);
+            wheelSpinController.Initialize(wheelModel, multiplier);
 
             if (wheelView == null)
             {
                 wheelView = FindFirstObjectByType<WheelOfFortune.UI.Wheel.UIWheelView>();
             }
 
-            if (wheelView != null && activeConfig != null)
+            if (wheelView != null && wheelModel != null)
             {
-                wheelView.UpdateWheelDisplay(activeConfig, multiplier);
+                wheelView.UpdateWheelDisplay(wheelModel, multiplier);
             }
         }
 
@@ -106,21 +101,21 @@ namespace WheelOfFortune.Core
             if (currentState != GameState.ReadyToSpin) return;
             if (wheelSpinController == null || wheelSpinController.IsSpinning) return;
 
-            var config = zoneProgressionManager.ActiveWheelConfig;
-            if (config == null)
+            var wheelModel = zoneProgressionManager.ActiveWheelModel;
+            if (wheelModel == null)
             {
-                Debug.LogError("[GameFlowManager] No active wheel config for current zone!");
+                Debug.LogError("[GameFlowManager] No active wheel model for current zone!");
                 return;
             }
 
             int targetIndex;
-            if (forceSliceIndex >= 0 && forceSliceIndex < WheelConfigSO.SliceCount)
+            if (forceSliceIndex >= 0 && forceSliceIndex < wheelModel.SliceCount)
             {
                 targetIndex = forceSliceIndex;
             }
             else
             {
-                targetIndex = config.SelectRandomSliceIndex();
+                targetIndex = wheelModel.SelectRandomSliceIndex();
             }
 
             SetState(GameState.Spinning);
@@ -131,8 +126,8 @@ namespace WheelOfFortune.Core
 
         private void OnWheelSpinFinished(int winningIndex)
         {
-            var config = zoneProgressionManager.ActiveWheelConfig;
-            var winningSlice = config.GetSlice(winningIndex);
+            var wheelModel = zoneProgressionManager.ActiveWheelModel;
+            var winningSlice = wheelModel != null ? wheelModel.GetSlice(winningIndex) : null;
 
             if (winningSlice == null)
             {
@@ -223,6 +218,10 @@ namespace WheelOfFortune.Core
             if (wheelSpinController != null)
             {
                 wheelSpinController.StopImmediate();
+            }
+            if (zoneProgressionManager != null)
+            {
+                zoneProgressionManager.RefreshCurrentZoneWheel();
             }
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);

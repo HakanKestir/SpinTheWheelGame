@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using WheelOfFortune.Data;
 
@@ -8,6 +8,8 @@ namespace WheelOfFortune.Core
     {
         [SerializeField] private ZoneConfigSO zoneConfig;
         [SerializeField] private int currentZone = 1;
+
+        private WheelRuntimeModel activeWheelModel;
 
         public event Action<int> OnZoneChanged;
 
@@ -19,28 +21,42 @@ namespace WheelOfFortune.Core
         public int NextSafeZone => zoneConfig != null ? zoneConfig.GetNextSafeZone(currentZone) : 5;
         public int NextSuperZone => zoneConfig != null ? zoneConfig.GetNextSuperZone(currentZone) : 30;
         public WheelConfigSO ActiveWheelConfig => zoneConfig != null ? zoneConfig.GetWheelConfigForZone(currentZone) : null;
+        public IWheelModel ActiveWheelModel => activeWheelModel != null ? activeWheelModel : (IWheelModel)ActiveWheelConfig;
         public int CurrentMultiplier => zoneConfig != null ? zoneConfig.GetRewardMultiplierForZone(currentZone) : 1;
 
         public void Initialize(ZoneConfigSO config, int startingZone = 1)
         {
             zoneConfig = config;
             currentZone = startingZone;
-            ActiveWheelConfig?.RollSlicesForZone(currentZone);
+            GenerateWheelModel();
             OnZoneChanged?.Invoke(currentZone);
         }
 
         public void AdvanceZone()
         {
             currentZone++;
-            ActiveWheelConfig?.RollSlicesForZone(currentZone);
+            GenerateWheelModel();
             OnZoneChanged?.Invoke(currentZone);
         }
 
         public void ResetToStart()
         {
             currentZone = 1;
-            ActiveWheelConfig?.RollSlicesForZone(currentZone);
+            GenerateWheelModel();
             OnZoneChanged?.Invoke(currentZone);
+        }
+
+        public void RefreshCurrentZoneWheel()
+        {
+            GenerateWheelModel();
+        }
+
+        private void GenerateWheelModel()
+        {
+            if (zoneConfig != null)
+            {
+                activeWheelModel = zoneConfig.CreateWheelModelForZone(currentZone);
+            }
         }
     }
 }

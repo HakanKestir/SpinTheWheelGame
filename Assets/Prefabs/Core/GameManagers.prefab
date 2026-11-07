@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &1208895950512710009
 GameObject:
@@ -97,5 +97,6 @@ MonoBehaviour:
   wheelSpinController: {fileID: 4489855978349297485}
   zoneProgressionManager: {fileID: 198231593961692914}
   playerInventoryManager: {fileID: 6800362275331384302}
+  wheelView: {fileID: 0}
   forceSliceIndex: -1
   rewardCardPopupView: {fileID: 0}
