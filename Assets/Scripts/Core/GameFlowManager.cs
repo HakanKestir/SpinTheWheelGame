@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using WheelOfFortune.Data;
 
@@ -19,6 +20,7 @@ namespace WheelOfFortune.Core
 
         private GameState currentState = GameState.ReadyToSpin;
         private int revivesUsedInRun = 0;
+        private IReadOnlyList<CollectedRewardEntry> bombRewardSnapshot;
 
         public event Action<GameState> OnStateChanged;
         public event Action<WheelSliceConfig, int> OnRewardWon;
@@ -138,8 +140,7 @@ namespace WheelOfFortune.Core
 
             if (winningSlice.IsBomb)
             {
-                SetState(GameState.BombEncounter);
-                OnBombHit?.Invoke();
+                EnterBombEncounter();
             }
             else
             {
@@ -179,6 +180,23 @@ namespace WheelOfFortune.Core
             CompleteRewardPresentation();
         }
 
+        /// <summary>
+        /// A bomb forfeits the whole run immediately: rewards are taken out of the run
+        /// (a snapshot is kept only so a paid revive can hand them back) and the game
+        /// stays locked in BombEncounter until the player revives or gives up.
+        /// </summary>
+        private void EnterBombEncounter()
+        {
+            if (playerInventoryManager != null)
+            {
+                bombRewardSnapshot = playerInventoryManager.CreateRunRewardSnapshot();
+                playerInventoryManager.ClearRunRewards();
+            }
+
+            SetState(GameState.BombEncounter);
+            OnBombHit?.Invoke();
+        }
+
         public void RequestReviveWithCurrency()
         {
             if (currentState != GameState.BombEncounter) return;
@@ -214,7 +232,14 @@ namespace WheelOfFortune.Core
 
         private void ExecuteRevive()
         {
-            // Revive: preserve all collected run rewards and allow re-spinning in the CURRENT zone (never advance)
+            // Revive: restore the run rewards forfeited by the bomb and allow re-spinning
+            // in the CURRENT zone (never advance).
+            if (playerInventoryManager != null && bombRewardSnapshot != null)
+            {
+                playerInventoryManager.RestoreRunRewards(bombRewardSnapshot);
+            }
+            bombRewardSnapshot = null;
+
             if (wheelSpinController != null)
             {
                 wheelSpinController.StopImmediate();
@@ -234,6 +259,7 @@ namespace WheelOfFortune.Core
 
             // Player forfeits all rewards and resets progression
             revivesUsedInRun = 0;
+            bombRewardSnapshot = null;
             playerInventoryManager.ClearRunRewards();
             zoneProgressionManager.ResetToStart();
             SetupCurrentZoneWheel();
@@ -269,6 +295,7 @@ namespace WheelOfFortune.Core
             }
 
             revivesUsedInRun = 0;
+            bombRewardSnapshot = null;
 
             // 1. Bank cash and gold into permanent wallet (and items into vault)
             if (playerInventoryManager != null)

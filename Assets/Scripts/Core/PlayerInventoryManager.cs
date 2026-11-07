@@ -31,6 +31,7 @@ namespace WheelOfFortune.Core
 
         public event Action<RewardItemSO, int> OnRewardAddedToRun;
         public event Action OnRunRewardsCleared;
+        public event Action OnRunRewardsRestored;
         public event Action<IReadOnlyList<CollectedRewardEntry>> OnRunRewardsBanked;
         public event Action<int, int> OnWalletBalanceChanged;
 
@@ -73,6 +74,43 @@ namespace WheelOfFortune.Core
             currentRunRewards.Clear();
             runRewardLookup.Clear();
             OnRunRewardsCleared?.Invoke();
+        }
+
+        /// <summary>
+        /// Captures a deep copy of the current run rewards so they can be restored after a paid revive.
+        /// </summary>
+        public IReadOnlyList<CollectedRewardEntry> CreateRunRewardSnapshot()
+        {
+            var snapshot = new List<CollectedRewardEntry>(currentRunRewards.Count);
+            foreach (var entry in currentRunRewards)
+            {
+                if (entry == null || entry.Item == null) continue;
+                snapshot.Add(new CollectedRewardEntry(entry.Item, entry.TotalAmount));
+            }
+            return snapshot;
+        }
+
+        /// <summary>
+        /// Replaces the current run rewards with a previously captured snapshot.
+        /// </summary>
+        public void RestoreRunRewards(IReadOnlyList<CollectedRewardEntry> snapshot)
+        {
+            currentRunRewards.Clear();
+            runRewardLookup.Clear();
+
+            if (snapshot != null)
+            {
+                foreach (var entry in snapshot)
+                {
+                    if (entry == null || entry.Item == null || entry.TotalAmount <= 0) continue;
+
+                    var restored = new CollectedRewardEntry(entry.Item, entry.TotalAmount);
+                    currentRunRewards.Add(restored);
+                    runRewardLookup[entry.Item.Id] = restored;
+                }
+            }
+
+            OnRunRewardsRestored?.Invoke();
         }
 
         public int GetPendingRunCash()
