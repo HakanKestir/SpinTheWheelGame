@@ -72,7 +72,22 @@ namespace WheelOfFortune.UI.Modals
             {
                 playerInventoryManager = FindFirstObjectByType<PlayerInventoryManager>();
             }
+
+            // Keep the modal's buttons clickable regardless of the global raycast optimizer.
+            foreach (Button button in new[] { ui_button_give_up, ui_button_revive_currency, ui_button_revive_bonus })
+            {
+                if (button == null) continue;
+                Image buttonImage = button.GetComponent<Image>();
+                if (buttonImage != null)
+                {
+                    buttonImage.raycastTarget = true;
+                }
+                button.interactable = true;
+            }
         }
+
+        // The bomb modal must never have its hit targets disabled by the global optimizer.
+        protected override void OptimizeRaycastAndMaskable() { }
 
         protected override void RegisterButtonCallbacks()
         {
