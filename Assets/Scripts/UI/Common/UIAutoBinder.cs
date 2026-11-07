@@ -84,7 +84,12 @@ namespace WheelOfFortune.UI.Common
                                   img.name.IndexOf("modal", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                   img.name.IndexOf("overlay", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                bool isInteractive = isScrollElement || isBackdrop || img.GetComponent<Selectable>() != null;
+                // A button's visual can live on a child transform so the root stays static
+                // for hit-testing. Any graphic under a Selectable still needs to receive
+                // raycasts, otherwise the button becomes unclickable.
+                bool isUnderSelectable = img.GetComponentInParent<Selectable>() != null;
+
+                bool isInteractive = isScrollElement || isBackdrop || isUnderSelectable;
                 img.raycastTarget = isInteractive;
             }
 
