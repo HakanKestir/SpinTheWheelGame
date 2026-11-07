@@ -103,7 +103,7 @@ namespace WheelOfFortune.UI.Rewards
             ui_panel_card_root = root;
         }
 
-        public void PlayRewardCelebration(RewardItemSO item, int amount, Action onAnimationFinished)
+        public void PlayRewardCelebration(RewardItemSO item, int amount, Action onCollected, Action onFinished = null)
         {
             if (gameObject != null && !gameObject.activeInHierarchy)
             {
@@ -113,13 +113,14 @@ namespace WheelOfFortune.UI.Rewards
             {
                 ui_panel_card_root.SetActive(true);
             }
-            StartCoroutine(RewardCelebrationRoutine(item, amount, onAnimationFinished));
+            StartCoroutine(RewardCelebrationRoutine(item, amount, onCollected, onFinished));
         }
 
-        private IEnumerator RewardCelebrationRoutine(RewardItemSO item, int amount, Action onFinished)
+        private IEnumerator RewardCelebrationRoutine(RewardItemSO item, int amount, Action onCollected, Action onFinished)
         {
             if (item == null || ui_panel_card_root == null || ui_transform_card_anim_container == null)
             {
+                onCollected?.Invoke();
                 onFinished?.Invoke();
                 yield break;
             }
@@ -164,8 +165,8 @@ namespace WheelOfFortune.UI.Rewards
             // Hold card display for player excitement
             yield return new WaitForSeconds(0.7f);
 
-            // 3. Determine target position on left tray
-            Vector3 targetScreenPos = GetTargetTrayPosition();
+            // 3. Determine target position on the tray (the row this reward will occupy)
+            Vector3 targetScreenPos = GetTargetTrayPosition(item);
 
             // 4. Spawn flying icon tokens along arc
             int count = Mathf.Clamp(tokenCount, 3, 6);
@@ -179,7 +180,11 @@ namespace WheelOfFortune.UI.Rewards
             // Wait for flight duration
             yield return new WaitForSeconds(flightDuration + (count * 0.08f) + 0.1f);
 
-            // 5. Shrink Card away
+            // 5. Tokens arrived: commit the reward so the panel amount updates and the row reacts
+            onCollected?.Invoke();
+            yield return new WaitForSeconds(0.15f);
+
+            // 6. Shrink Card away
             ui_transform_card_anim_container.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack);
             yield return new WaitForSeconds(0.3f);
 
@@ -193,16 +198,11 @@ namespace WheelOfFortune.UI.Rewards
             onFinished?.Invoke();
         }
 
-        private Vector3 GetTargetTrayPosition()
+        private Vector3 GetTargetTrayPosition(RewardItemSO item)
         {
             if (rewardsTrayView != null)
             {
-                var rt = rewardsTrayView.GetComponent<RectTransform>();
-                if (rt != null)
-                {
-                    // Target near top-center of tray (where exit button & slots sit)
-                    return rt.TransformPoint(new Vector3(rt.rect.width * 0.5f, -120f, 0f));
-                }
+                return rewardsTrayView.GetCollectTargetPosition(item);
             }
             // Fallback left side
             return new Vector3(Screen.width * 0.12f, Screen.height * 0.65f, 0f);

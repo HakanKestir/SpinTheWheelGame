@@ -146,9 +146,9 @@ namespace WheelOfFortune.Core
             {
                 int multiplier = zoneProgressionManager.CurrentMultiplier;
                 int wonAmount = winningSlice.GetAmount(multiplier);
+                var wonItem = winningSlice.RewardItem;
 
                 SetState(GameState.RewardAwarded);
-                playerInventoryManager.AddReward(winningSlice.RewardItem, wonAmount);
                 OnRewardWon?.Invoke(winningSlice, wonAmount);
 
                 if (rewardCardPopupView != null)
@@ -158,12 +158,27 @@ namespace WheelOfFortune.Core
                         rewardCardPopupView.gameObject.SetActive(true);
                     }
 
-                    rewardCardPopupView.PlayRewardCelebration(winningSlice.RewardItem, wonAmount, CompleteRewardPresentation);
+                    // The reward is only added to the run once the collect tokens reach the tray,
+                    // so the panel amount updates after the animation instead of before it.
+                    rewardCardPopupView.PlayRewardCelebration(
+                        wonItem,
+                        wonAmount,
+                        () => CollectWonReward(wonItem, wonAmount),
+                        CompleteRewardPresentation);
                 }
                 else
                 {
+                    CollectWonReward(wonItem, wonAmount);
                     StartCoroutine(ProcessZoneAdvanceRoutine());
                 }
+            }
+        }
+
+        private void CollectWonReward(RewardItemSO item, int amount)
+        {
+            if (playerInventoryManager != null)
+            {
+                playerInventoryManager.AddReward(item, amount);
             }
         }
 

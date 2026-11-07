@@ -297,7 +297,7 @@ namespace WheelOfFortune.UI.Rewards
 
         private void OnRewardAdded(RewardItemSO item, int amount)
         {
-            RebuildTraySlots(true);
+            RebuildTraySlots(item != null ? item.Id : null);
         }
 
         private void OnRewardsCleared()
@@ -307,10 +307,72 @@ namespace WheelOfFortune.UI.Rewards
 
         private void OnRewardsRestored()
         {
-            RebuildTraySlots(false);
+            RebuildTraySlots(null);
         }
 
-        private void RebuildTraySlots(bool animateLast)
+        /// <summary>
+        /// Returns the world position the collect tokens should fly to: the row that
+        /// already holds this item, or the row the item is about to be appended to.
+        /// </summary>
+        public Vector3 GetCollectTargetPosition(RewardItemSO item)
+        {
+            var existingSlot = FindActiveSlot(item);
+            if (existingSlot != null)
+            {
+                return existingSlot.transform.position;
+            }
+
+            float slotHeight = slotPrefab != null ? ((RectTransform)slotPrefab.transform).rect.height : 72f;
+            RectTransform viewport = ui_scroll_rect_rewards != null ? ui_scroll_rect_rewards.viewport : null;
+
+            if (viewport != null && ui_transform_tray_content != null
+                && ui_transform_tray_content.rect.height + slotHeight > viewport.rect.height)
+            {
+                // Content will auto-scroll to the bottom, so the new row lands at the viewport bottom.
+                return viewport.TransformPoint(new Vector3(0f, viewport.rect.yMin + (slotHeight * 0.5f), 0f));
+            }
+
+            var lastActiveSlot = GetLastActiveSlot();
+            if (lastActiveSlot != null)
+            {
+                return lastActiveSlot.transform.position + new Vector3(0f, -(slotHeight + 10f), 0f);
+            }
+
+            if (ui_transform_tray_content != null)
+            {
+                return ui_transform_tray_content.TransformPoint(new Vector3(0f, -(slotHeight * 0.5f), 0f));
+            }
+
+            return transform.position;
+        }
+
+        private UIRewardTraySlotItemView FindActiveSlot(RewardItemSO item)
+        {
+            if (item == null) return null;
+
+            foreach (var slot in activeSlots)
+            {
+                if (slot != null && slot.gameObject.activeSelf && slot.CurrentItemId == item.Id)
+                {
+                    return slot;
+                }
+            }
+            return null;
+        }
+
+        private UIRewardTraySlotItemView GetLastActiveSlot()
+        {
+            for (int i = activeSlots.Count - 1; i >= 0; i--)
+            {
+                if (activeSlots[i] != null && activeSlots[i].gameObject.activeSelf)
+                {
+                    return activeSlots[i];
+                }
+            }
+            return null;
+        }
+
+        private void RebuildTraySlots(string highlightedItemId)
         {
             if (playerInventoryManager == null || ui_transform_tray_content == null || slotPrefab == null) return;
 
@@ -331,7 +393,9 @@ namespace WheelOfFortune.UI.Rewards
                 {
                     activeSlots[i].gameObject.SetActive(true);
                     EnsureMaskable(activeSlots[i].gameObject);
-                    bool shouldAnimate = animateLast && (i == rewards.Count - 1);
+                    bool shouldAnimate = !string.IsNullOrEmpty(highlightedItemId)
+                        && rewards[i].Item != null
+                        && rewards[i].Item.Id == highlightedItemId;
                     activeSlots[i].SetReward(rewards[i], shouldAnimate);
                 }
                 else
@@ -345,7 +409,7 @@ namespace WheelOfFortune.UI.Rewards
             LayoutRebuilder.ForceRebuildLayoutImmediate(ui_transform_tray_content);
 
             // Auto-scroll to the bottom (newest reward) when a new reward arrives
-            if (animateLast && ui_scroll_rect_rewards != null)
+            if (!string.IsNullOrEmpty(highlightedItemId) && ui_scroll_rect_rewards != null)
             {
                 ui_scroll_rect_rewards.verticalNormalizedPosition = 0f;
             }
