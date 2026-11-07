@@ -311,9 +311,66 @@ namespace WheelOfFortune.UI.Rewards
         }
 
         /// <summary>
-        /// Returns the world position the collect tokens should fly to: the row that
-        /// already holds this item, or the row the item is about to be appended to.
+        /// Returns the slot the collect tokens should fly to: the row that
+        /// already holds this item, or null when the item will be appended.
         /// </summary>
+        public UIRewardTraySlotItemView GetCollectTargetSlot(RewardItemSO item)
+        {
+            return FindActiveSlot(item);
+        }
+
+        /// <summary>
+        /// Brings a tray slot into the visible viewport so a collect animation
+        /// never targets (or updates) a half-hidden row.
+        /// </summary>
+        public void ScrollToSlot(UIRewardTraySlotItemView slot)
+        {
+            if (slot == null || ui_scroll_rect_rewards == null) return;
+            var viewport = ui_scroll_rect_rewards.viewport;
+            var content = ui_scroll_rect_rewards.content;
+            if (viewport == null || content == null) return;
+
+            float viewportHeight = viewport.rect.height;
+            float contentHeight = content.rect.height;
+            if (contentHeight <= viewportHeight)
+            {
+                ui_scroll_rect_rewards.verticalNormalizedPosition = 1f;
+                return;
+            }
+
+            var slotRT = slot.transform as RectTransform;
+            float slotHeight = slotRT != null ? slotRT.rect.height : 72f;
+            // Content is top-anchored: localPosition.y is the (negative) distance
+            // from the content top to the slot's top edge.
+            float slotTop = -slot.transform.localPosition.y;
+            float slotBottom = slotTop + slotHeight;
+
+            float scrollOffset = -content.anchoredPosition.y;
+            if (slotBottom > scrollOffset + viewportHeight)
+            {
+                scrollOffset = slotBottom - viewportHeight;
+            }
+            if (slotTop < scrollOffset)
+            {
+                scrollOffset = slotTop;
+            }
+            scrollOffset = Mathf.Clamp(scrollOffset, 0f, contentHeight - viewportHeight);
+
+            content.anchoredPosition = new Vector2(content.anchoredPosition.x, -scrollOffset);
+            float normalized = 1f - scrollOffset / (contentHeight - viewportHeight);
+            ui_scroll_rect_rewards.verticalNormalizedPosition = Mathf.Clamp01(normalized);
+        }
+
+        public void LockScroll(bool locked)
+        {
+            if (ui_scroll_rect_rewards == null) return;
+            ui_scroll_rect_rewards.enabled = !locked;
+            if (ui_scrollbar_tray != null)
+            {
+                ui_scrollbar_tray.interactable = !locked;
+            }
+        }
+
         public Vector3 GetCollectTargetPosition(RewardItemSO item)
         {
             var existingSlot = FindActiveSlot(item);
@@ -408,10 +465,28 @@ namespace WheelOfFortune.UI.Rewards
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(ui_transform_tray_content);
 
-            // Auto-scroll to the bottom (newest reward) when a new reward arrives
+            // Auto-scroll so the row that just received a reward is visible,
+            // whether it is a freshly appended slot (bottom) or an existing one.
             if (!string.IsNullOrEmpty(highlightedItemId) && ui_scroll_rect_rewards != null)
             {
-                ui_scroll_rect_rewards.verticalNormalizedPosition = 0f;
+                UIRewardTraySlotItemView highlightedSlot = null;
+                foreach (var slot in activeSlots)
+                {
+                    if (slot != null && slot.gameObject.activeSelf && slot.CurrentItemId == highlightedItemId)
+                    {
+                        highlightedSlot = slot;
+                        break;
+                    }
+                }
+
+                if (highlightedSlot != null)
+                {
+                    ScrollToSlot(highlightedSlot);
+                }
+                else
+                {
+                    ui_scroll_rect_rewards.verticalNormalizedPosition = 0f;
+                }
             }
         }
 

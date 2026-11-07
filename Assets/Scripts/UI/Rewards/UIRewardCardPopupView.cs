@@ -120,6 +120,7 @@ namespace WheelOfFortune.UI.Rewards
         {
             if (item == null || ui_panel_card_root == null || ui_transform_card_anim_container == null)
             {
+                if (rewardsTrayView != null) rewardsTrayView.LockScroll(false);
                 onCollected?.Invoke();
                 onFinished?.Invoke();
                 yield break;
@@ -165,7 +166,24 @@ namespace WheelOfFortune.UI.Rewards
             // Hold card display for player excitement
             yield return new WaitForSeconds(0.7f);
 
-            // 3. Determine target position on the tray (the row this reward will occupy)
+            // 3. Bring the target row into view, then lock scrolling so the
+            //    captured flight destination stays valid while tokens are in the air.
+            UIRewardTraySlotItemView targetSlot = null;
+            if (rewardsTrayView != null)
+            {
+                targetSlot = rewardsTrayView.GetCollectTargetSlot(item);
+                if (targetSlot != null)
+                {
+                    rewardsTrayView.ScrollToSlot(targetSlot);
+                }
+                else if (rewardsTrayView.RewardsScrollRect != null)
+                {
+                    rewardsTrayView.RewardsScrollRect.verticalNormalizedPosition = 0f;
+                }
+                rewardsTrayView.LockScroll(true);
+            }
+
+            // 4. Determine target position on the tray (the row this reward will occupy)
             Vector3 targetScreenPos = GetTargetTrayPosition(item);
 
             // 4. Spawn flying icon tokens along arc
@@ -181,6 +199,10 @@ namespace WheelOfFortune.UI.Rewards
             yield return new WaitForSeconds(flightDuration + (count * 0.08f) + 0.1f);
 
             // 5. Tokens arrived: commit the reward so the panel amount updates and the row reacts
+            if (rewardsTrayView != null)
+            {
+                rewardsTrayView.LockScroll(false);
+            }
             onCollected?.Invoke();
             yield return new WaitForSeconds(0.15f);
 
@@ -195,6 +217,10 @@ namespace WheelOfFortune.UI.Rewards
             }
             ui_panel_card_root.SetActive(false);
 
+            if (rewardsTrayView != null)
+            {
+                rewardsTrayView.LockScroll(false);
+            }
             onFinished?.Invoke();
         }
 
