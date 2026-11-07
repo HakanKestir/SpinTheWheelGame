@@ -33,7 +33,7 @@
 
 ## 📱 Responsive Multi-Aspect Ratio Support
 
-The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode (`m_ScreenMatchMode: 2`), ensuring layout stability, no off-center clipping, and zero black bars across ultra-wide, standard, and tablet displays.
+The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode (`m_ScreenMatchMode: 1`), ensuring layout stability, no off-center clipping, and zero black bars across ultra-wide, standard, and tablet displays.
 
 | Ultra-Wide (20:9 / 2400×1080) | Standard (16:9 / 1920×1080) | Tablet / Foldable (4:3 / 2048×1536) |
 | :---: | :---: | :---: |
