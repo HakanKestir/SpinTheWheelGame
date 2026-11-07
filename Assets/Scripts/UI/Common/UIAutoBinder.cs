@@ -14,12 +14,26 @@ namespace WheelOfFortune.UI.Common
         protected virtual void Awake()
         {
             AutoBindReferences();
-            RegisterButtonCallbacks();
         }
 
-        protected virtual void OnDestroy()
+        protected virtual void OnEnable()
+        {
+            RefreshButtonCallbacks();
+        }
+
+        protected virtual void OnDisable()
         {
             UnregisterButtonCallbacks();
+        }
+
+        /// <summary>
+        /// Removes any previous subscriptions before registering, so a view can never
+        /// end up with duplicate listeners regardless of how often initialization runs.
+        /// </summary>
+        protected void RefreshButtonCallbacks()
+        {
+            UnregisterButtonCallbacks();
+            RegisterButtonCallbacks();
         }
 
         /// <summary>

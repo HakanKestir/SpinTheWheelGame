@@ -71,6 +71,7 @@ namespace WheelOfFortune.UI.Rewards
             {
                 playerInventoryManager.OnRewardAddedToRun += OnRewardAdded;
                 playerInventoryManager.OnRunRewardsCleared += OnRewardsCleared;
+                playerInventoryManager.OnRunRewardsRestored += OnRewardsRestored;
                 playerInventoryManager.OnRunRewardsBanked += OnRunRewardsBanked;
             }
             if (zoneProgressionManager != null)
@@ -94,6 +95,7 @@ namespace WheelOfFortune.UI.Rewards
             {
                 playerInventoryManager.OnRewardAddedToRun -= OnRewardAdded;
                 playerInventoryManager.OnRunRewardsCleared -= OnRewardsCleared;
+                playerInventoryManager.OnRunRewardsRestored -= OnRewardsRestored;
                 playerInventoryManager.OnRunRewardsBanked -= OnRunRewardsBanked;
             }
             if (zoneProgressionManager != null)
@@ -110,7 +112,7 @@ namespace WheelOfFortune.UI.Rewards
         public void InitializeView()
         {
             AutoBindReferences();
-            RegisterButtonCallbacks();
+            RefreshButtonCallbacks();
             InitializeScrollTray();
             UpdateExitButtonState();
         }
@@ -301,6 +303,11 @@ namespace WheelOfFortune.UI.Rewards
         private void OnRewardsCleared()
         {
             ClearTraySlots();
+        }
+
+        private void OnRewardsRestored()
+        {
+            RebuildTraySlots(false);
         }
 
         private void RebuildTraySlots(bool animateLast)

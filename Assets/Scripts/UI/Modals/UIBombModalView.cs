@@ -173,15 +173,15 @@ namespace WheelOfFortune.UI.Modals
             }
         }
 
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             KillTweens();
         }
 
-        protected override void OnDestroy()
+        private void OnDestroy()
         {
             KillTweens();
-            base.OnDestroy();
         }
 
         private void KillTweens()

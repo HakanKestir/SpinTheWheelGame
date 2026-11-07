@@ -45,7 +45,7 @@ namespace WheelOfFortune.UI.Modals
         public void InitializeView()
         {
             AutoBindReferences();
-            RegisterButtonCallbacks();
+            RefreshButtonCallbacks();
             InitializeScrollBox();
             HideModal();
         }

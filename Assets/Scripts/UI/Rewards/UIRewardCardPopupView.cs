@@ -317,9 +317,8 @@ namespace WheelOfFortune.UI.Rewards
             tokenPrefab = prefab;
         }
 
-        protected override void OnDestroy()
+        private void OnDestroy()
         {
-            base.OnDestroy();
             glowRotateTween?.Kill();
         }
     }
