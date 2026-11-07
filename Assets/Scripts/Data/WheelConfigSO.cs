@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WheelOfFortune.Data
 {
     [CreateAssetMenu(fileName = "NewWheelConfig", menuName = "WheelOfFortune/Wheel/Wheel Config", order = 2)]
-    public class WheelConfigSO : ScriptableObject
+    public class WheelConfigSO : ScriptableObject, IWheelModel
     {
         public const int SliceCount = 8;
 
@@ -31,6 +31,7 @@ namespace WheelOfFortune.Data
         public RewardItemSO BombRewardItem => bombRewardItem;
         public IReadOnlyList<WheelRewardPoolEntry> RewardPool => rewardPool;
         public IReadOnlyList<WheelSliceConfig> Slices => slices;
+        int IWheelModel.SliceCount => SliceCount;
 
         private void OnValidate()
         {
@@ -61,21 +62,26 @@ namespace WheelOfFortune.Data
         }
 
         /// <summary>
-        /// Dynamically rolls 8 slices for the current zone from this wheel's reward pool.
-        /// Bronze wheel contains 1 bomb + 7 distinct rewards.
-        /// Silver and Gold wheels contain 8 distinct non-bomb rewards.
+        /// Dynamically creates a pure runtime wheel model for the specified zone.
+        /// Scales reward amounts according to the zone progression curve without mutating this ScriptableObject.
         /// </summary>
-        public void RollSlicesForZone(int zone)
+        public WheelRuntimeModel CreateRuntimeModelForZone(int zone, AnimationCurve progressionCurve = null)
         {
-            EnsureSliceArray();
-
             if (rewardPool == null || rewardPool.Count == 0)
             {
-                // Fallback: If pool is not yet populated, keep existing slices intact
-                return;
+                var fallbackSlices = new List<WheelSliceConfig>();
+                if (slices != null)
+                {
+                    for (int i = 0; i < slices.Length; i++)
+                    {
+                        var s = new WheelSliceConfig();
+                        if (slices[i] != null) s.SetConfig(slices[i].RewardItem, slices[i].GetAmount(1), slices[i].Weight);
+                        fallbackSlices.Add(s);
+                    }
+                }
+                return new WheelRuntimeModel(tierType, wheelBaseSprite, indicatorSprite, fallbackSlices, zone);
             }
 
-            // Filter non-bomb entries from reward pool
             var nonBombCandidates = new List<WheelRewardPoolEntry>();
             for (int i = 0; i < rewardPool.Count; i++)
             {
@@ -88,7 +94,7 @@ namespace WheelOfFortune.Data
 
             if (nonBombCandidates.Count == 0)
             {
-                return;
+                return new WheelRuntimeModel(tierType, wheelBaseSprite, indicatorSprite, new List<WheelSliceConfig>(), zone);
             }
 
             bool includeBomb = (tierType == WheelTierType.Bronze);
@@ -97,13 +103,23 @@ namespace WheelOfFortune.Data
             int neededRewardCount = includeBomb ? SliceCount - 1 : SliceCount;
             var selectedEntries = PickDistinctWeightedEntries(nonBombCandidates, neededRewardCount);
 
+            float zoneMultiplier = 1f;
+            if (progressionCurve != null && progressionCurve.length > 0)
+            {
+                zoneMultiplier = Mathf.Max(1f, progressionCurve.Evaluate(zone));
+            }
+            else if (zone > 1)
+            {
+                // Default progression curve: ~5% gain per zone
+                zoneMultiplier = 1f + ((zone - 1) * 0.05f);
+            }
+
+            var runtimeSlices = new List<WheelSliceConfig>(SliceCount);
             int rewardPickIndex = 0;
+
             for (int i = 0; i < SliceCount; i++)
             {
-                if (slices[i] == null)
-                {
-                    slices[i] = new WheelSliceConfig();
-                }
+                var slice = new WheelSliceConfig();
 
                 if (i == bombIndex)
                 {
@@ -113,15 +129,52 @@ namespace WheelOfFortune.Data
                         var bombEntry = rewardPool.Find(e => e != null && e.RewardItem != null && e.RewardItem.IsBomb);
                         if (bombEntry != null) bombItem = bombEntry.RewardItem;
                     }
-                    slices[i].SetConfig(bombItem, 0, 10);
+                    slice.SetConfig(bombItem, 0, 10);
                 }
                 else
                 {
                     if (rewardPickIndex < selectedEntries.Count)
                     {
                         var entry = selectedEntries[rewardPickIndex++];
-                        slices[i].SetConfig(entry.RewardItem, entry.BaseAmount, entry.Weight);
+                        int scaledAmount = ScaleAmountForZone(entry.RewardItem, entry.BaseAmount, zoneMultiplier);
+                        slice.SetConfig(entry.RewardItem, scaledAmount, entry.Weight);
                     }
+                }
+
+                runtimeSlices.Add(slice);
+            }
+
+            return new WheelRuntimeModel(tierType, wheelBaseSprite, indicatorSprite, runtimeSlices, zone);
+        }
+
+        private int ScaleAmountForZone(RewardItemSO item, int baseAmount, float zoneMultiplier)
+        {
+            if (item == null || baseAmount <= 0) return baseAmount;
+
+            if (baseAmount == 1 && (item.RewardType == RewardType.Weapon || item.RewardType == RewardType.Chest || item.RewardType == RewardType.Cosmetic))
+            {
+                return 1;
+            }
+
+            return Mathf.Max(1, Mathf.RoundToInt(baseAmount * zoneMultiplier));
+        }
+
+        /// <summary>
+        /// Dynamically rolls 8 slices for the current zone from this wheel's reward pool.
+        /// Bronze wheel contains 1 bomb + 7 distinct rewards.
+        /// Silver and Gold wheels contain 8 distinct non-bomb rewards.
+        /// </summary>
+        public void RollSlicesForZone(int zone)
+        {
+            EnsureSliceArray();
+            var model = CreateRuntimeModelForZone(zone);
+            for (int i = 0; i < Mathf.Min(slices.Length, model.SliceCount); i++)
+            {
+                var s = model.GetSlice(i);
+                if (slices[i] == null) slices[i] = new WheelSliceConfig();
+                if (s != null)
+                {
+                    slices[i].SetConfig(s.RewardItem, s.GetAmount(1), s.Weight);
                 }
             }
         }
