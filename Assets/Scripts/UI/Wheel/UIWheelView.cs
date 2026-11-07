@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Core;
@@ -155,7 +155,7 @@ namespace WheelOfFortune.UI.Wheel
         {
             if (zoneProgressionManager != null)
             {
-                UpdateWheelDisplay(zoneProgressionManager.ActiveWheelConfig, zoneProgressionManager.CurrentMultiplier);
+                UpdateWheelDisplay(zoneProgressionManager.ActiveWheelModel, zoneProgressionManager.CurrentMultiplier);
             }
         }
 
@@ -184,11 +184,16 @@ namespace WheelOfFortune.UI.Wheel
         {
             if (zoneProgressionManager != null)
             {
-                UpdateWheelDisplay(zoneProgressionManager.ActiveWheelConfig, zoneProgressionManager.CurrentMultiplier);
+                UpdateWheelDisplay(zoneProgressionManager.ActiveWheelModel, zoneProgressionManager.CurrentMultiplier);
             }
         }
 
         public void UpdateWheelDisplay(WheelConfigSO config, int zoneMultiplier)
+        {
+            UpdateWheelDisplay((IWheelModel)config, zoneMultiplier);
+        }
+
+        public void UpdateWheelDisplay(IWheelModel config, int zoneMultiplier)
         {
             if (config == null) return;
 

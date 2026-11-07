@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 using WheelOfFortune.Data;
 
@@ -95,8 +95,32 @@ namespace WheelOfFortune.Editor
 
             // Restore enabled
             zoneConfig.SetMultiplicationSettings(true, 4);
-            EditorUtility.SetDirty(zoneConfig);
-            AssetDatabase.SaveAssets();
+            // 6. Test Zone-Based Reward Scaling (Zone 29 vs Zone 1)
+            var modelZ1 = bronze.CreateRuntimeModelForZone(1, zoneConfig.ZoneProgressionCurve);
+            var modelZ29 = bronze.CreateRuntimeModelForZone(29, zoneConfig.ZoneProgressionCurve);
+
+            if (modelZ1.SliceCount != WheelConfigSO.SliceCount || modelZ29.SliceCount != WheelConfigSO.SliceCount)
+            {
+                Debug.LogError("[VerificationTest] FAILED: Runtime wheel models slice count mismatch!");
+                return;
+            }
+
+            int totalAmountZ1 = 0;
+            int totalAmountZ29 = 0;
+            for (int i = 0; i < WheelConfigSO.SliceCount; i++)
+            {
+                var s1 = modelZ1.GetSlice(i);
+                var s29 = modelZ29.GetSlice(i);
+                if (s1 != null && !s1.IsBomb) totalAmountZ1 += s1.GetAmount(1);
+                if (s29 != null && !s29.IsBomb) totalAmountZ29 += s29.GetAmount(1);
+            }
+
+            if (totalAmountZ29 <= totalAmountZ1)
+            {
+                Debug.LogError($"[VerificationTest] FAILED: Zone 29 rewards ({totalAmountZ29}) did not scale higher than Zone 1 ({totalAmountZ1})!");
+                return;
+            }
+            Debug.Log($"[VerificationTest] PASSED: Zone progression scaling active. Total base rewards at Z1={totalAmountZ1} -> Z29={totalAmountZ29} (~{totalAmountZ29 / (float)totalAmountZ1:F1}x).");
 
             Debug.Log("[VerificationTest] ★ ALL TESTS PASSED SUCCESSFULLY! ★");
         }
