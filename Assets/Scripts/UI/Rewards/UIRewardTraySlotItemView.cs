@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Core;
 using WheelOfFortune.UI.Common;
+using WheelOfFortune.Utils;
 
 namespace WheelOfFortune.UI.Rewards
 {
@@ -52,7 +53,7 @@ namespace WheelOfFortune.UI.Rewards
 
             if (ui_text_reward_amount_value != null)
             {
-                ui_text_reward_amount_value.text = entry.TotalAmount.ToString();
+                ui_text_reward_amount_value.text = NumberFormatter.ToShortString(entry.TotalAmount);
             }
 
             if (playAnimation && ui_transform_punch_target != null)

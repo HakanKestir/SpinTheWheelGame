@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using WheelOfFortune.Data;
 using WheelOfFortune.UI.Common;
+using WheelOfFortune.Utils;
 
 namespace WheelOfFortune.UI.Wheel
 {
@@ -55,7 +56,7 @@ namespace WheelOfFortune.UI.Wheel
                 else
                 {
                     int amount = slice.GetAmount(zoneMultiplier);
-                    ui_text_slice_amount_value.text = $"x{amount}";
+                    ui_text_slice_amount_value.text = $"x{NumberFormatter.ToShortString(amount)}";
                 }
             }
         }
