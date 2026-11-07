@@ -15,6 +15,7 @@ namespace WheelOfFortune.Editor
         private SerializedProperty goldenWheelConfigProp;
         private SerializedProperty enableRewardMultiplicationProp;
         private SerializedProperty multiplierIncrementIntervalProp;
+        private SerializedProperty zoneProgressionCurveProp;
         private SerializedProperty superZonePreviewRewardProp;
         private SerializedProperty reviveGoldCostProp;
         private SerializedProperty reviveCostIncrementProp;
@@ -32,6 +33,7 @@ namespace WheelOfFortune.Editor
             goldenWheelConfigProp = serializedObject.FindProperty("goldenWheelConfig");
             enableRewardMultiplicationProp = serializedObject.FindProperty("enableRewardMultiplication");
             multiplierIncrementIntervalProp = serializedObject.FindProperty("multiplierIncrementInterval");
+            zoneProgressionCurveProp = serializedObject.FindProperty("zoneProgressionCurve");
             superZonePreviewRewardProp = serializedObject.FindProperty("superZonePreviewReward");
             reviveGoldCostProp = serializedObject.FindProperty("reviveGoldCost");
             reviveCostIncrementProp = serializedObject.FindProperty("reviveCostIncrement");
@@ -56,7 +58,7 @@ namespace WheelOfFortune.Editor
             EditorGUILayout.PropertyField(goldenWheelConfigProp);
             EditorGUILayout.Space(8);
 
-            EditorGUILayout.LabelField("Multiplier Controls", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Multiplier Controls & Scaling Curve", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(enableRewardMultiplicationProp, new GUIContent("Enable Reward Multiplication"));
 
             EditorGUI.BeginDisabledGroup(!enableRewardMultiplicationProp.boolValue);
@@ -68,6 +70,8 @@ namespace WheelOfFortune.Editor
             }
             EditorGUI.indentLevel--;
             EditorGUI.EndDisabledGroup();
+
+            EditorGUILayout.PropertyField(zoneProgressionCurveProp, new GUIContent("Zone Progression Curve"));
             EditorGUILayout.Space(8);
 
             EditorGUILayout.LabelField("Super Zone Preview", EditorStyles.boldLabel);

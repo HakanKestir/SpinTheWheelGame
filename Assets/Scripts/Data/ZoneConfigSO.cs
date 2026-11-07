@@ -25,6 +25,16 @@ namespace WheelOfFortune.Data
         [Tooltip("Number of zones before the reward multiplier increments by +1 (e.g. 4 means multiplier increases every 4 zones)")]
         [SerializeField] private int multiplierIncrementInterval = 4;
 
+        [Header("Zone Progression Scaling Curve")]
+        [Tooltip("Curve defining base reward scaling as zone advances (X: zone, Y: amount multiplier).")]
+        [SerializeField] private AnimationCurve zoneProgressionCurve = new AnimationCurve(
+            new Keyframe(1f, 1f),
+            new Keyframe(10f, 1.5f),
+            new Keyframe(20f, 2.2f),
+            new Keyframe(30f, 3.5f),
+            new Keyframe(60f, 6.0f)
+        );
+
         [Header("Super Zone Target Preview")]
         [SerializeField] private RewardItemSO superZonePreviewReward;
 
@@ -49,7 +59,15 @@ namespace WheelOfFortune.Data
         public bool RestrictExitToSafeZones => restrictExitToSafeZones;
         public bool EnableRewardMultiplication => enableRewardMultiplication;
         public int MultiplierIncrementInterval => multiplierIncrementInterval;
+        public AnimationCurve ZoneProgressionCurve => zoneProgressionCurve;
         public RewardItemSO SuperZonePreviewReward => superZonePreviewReward;
+
+        public WheelRuntimeModel CreateWheelModelForZone(int zone)
+        {
+            var config = GetWheelConfigForZone(zone);
+            if (config == null) return null;
+            return config.CreateRuntimeModelForZone(zone, zoneProgressionCurve);
+        }
         public int ReviveGoldCost => reviveGoldCost;
         public int ReviveCostIncrement => reviveCostIncrement;
         public int MaxRevivesPerRun => maxRevivesPerRun;
