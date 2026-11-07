@@ -131,6 +131,24 @@ namespace WheelOfFortune.UI.Modals
             {
                 playerInventoryManager = FindFirstObjectByType<PlayerInventoryManager>();
             }
+
+            // Keep the modal's buttons clickable.
+            foreach (Button button in new[] { ui_button_exit_cancel, ui_button_exit_confirm, ui_button_cashout_claim })
+            {
+                if (button == null) continue;
+                Image buttonImage = button.GetComponent<Image>();
+                if (buttonImage != null)
+                {
+                    buttonImage.raycastTarget = true;
+                }
+                button.interactable = true;
+            }
+        }
+
+        // Keep the modal's buttons clickable regardless of the global raycast optimizer.
+        protected override void OptimizeRaycastAndMaskable()
+        {
+            // Do not run the global optimizer on this modal; it can disable hit targets.
         }
 
         protected override void RegisterButtonCallbacks()
