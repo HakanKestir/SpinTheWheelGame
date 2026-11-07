@@ -311,7 +311,11 @@ namespace WheelOfFortune.UI.Modals
 
         private void RebuildRewardCards()
         {
-            if (playerInventoryManager == null || ui_transform_rewards_content == null) return;
+            if (playerInventoryManager == null || ui_transform_rewards_content == null)
+            {
+                Debug.LogWarning($"[UICashOutModalView] RebuildRewardCards aborted: playerInventoryManager={playerInventoryManager != null}, content={ui_transform_rewards_content != null}");
+                return;
+            }
 
             var rewards = playerInventoryManager.CurrentRunRewards;
             bool hasRewards = (rewards != null && rewards.Count > 0);
@@ -325,9 +329,20 @@ namespace WheelOfFortune.UI.Modals
                 }
             }
 
-            if (rewardCardPrefab == null) return;
+            if (rewardCardPrefab == null)
+            {
+#if UNITY_EDITOR
+                rewardCardPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<UIExitRewardCardItemView>("Assets/Prefabs/Modals/ExitRewardCard_Item.prefab");
+#endif
+                if (rewardCardPrefab == null)
+                {
+                    Debug.LogWarning("[UICashOutModalView] rewardCardPrefab is not assigned; cannot build reward cards.");
+                    return;
+                }
+            }
 
             int count = hasRewards ? rewards.Count : 0;
+            Debug.Log($"[UICashOutModalView] RebuildRewardCards: rewards={count}, hasRewards={hasRewards}");
 
             // Instantiate cards as needed
             while (activeCards.Count < count)
