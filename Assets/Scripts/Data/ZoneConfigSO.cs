@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace WheelOfFortune.Data
 {
@@ -29,9 +29,17 @@ namespace WheelOfFortune.Data
         [SerializeField] private RewardItemSO superZonePreviewReward;
 
         [Header("Economy & Revive")]
-        [SerializeField] private int reviveGoldCost = 25;
-        [SerializeField] private int initialCash = 1000;
-        [SerializeField] private int initialGold = 50;
+        [Tooltip("Base gold cost for the first revive in a run")]
+        [SerializeField, Min(1)] private int reviveGoldCost = 25;
+
+        [Tooltip("Cost increase per each revive used in the same run")]
+        [SerializeField, Min(0)] private int reviveCostIncrement = 25;
+
+        [Tooltip("Maximum number of revives allowed in a single run")]
+        [SerializeField, Range(1, 10)] private int maxRevivesPerRun = 3;
+
+        [SerializeField, Min(0)] private int initialCash = 1000;
+        [SerializeField, Min(0)] private int initialGold = 50;
 
         public int SafeZoneInterval => safeZoneInterval;
         public int SuperZoneInterval => superZoneInterval;
@@ -43,18 +51,30 @@ namespace WheelOfFortune.Data
         public int MultiplierIncrementInterval => multiplierIncrementInterval;
         public RewardItemSO SuperZonePreviewReward => superZonePreviewReward;
         public int ReviveGoldCost => reviveGoldCost;
+        public int ReviveCostIncrement => reviveCostIncrement;
+        public int MaxRevivesPerRun => maxRevivesPerRun;
         public int InitialCash => initialCash;
         public int InitialGold => initialGold;
 
+        public bool CanRevive(int revivesUsedInRun)
+        {
+            return revivesUsedInRun < maxRevivesPerRun;
+        }
+
+        public int GetReviveCost(int revivesUsedInRun)
+        {
+            return reviveGoldCost + (revivesUsedInRun * reviveCostIncrement);
+        }
+
         public bool IsSuperZone(int zone)
         {
-            if (zone <= 0) return false;
+            if (zone <= 0 || superZoneInterval <= 0) return false;
             return zone % superZoneInterval == 0;
         }
 
         public bool IsSafeZone(int zone)
         {
-            if (zone <= 0) return false;
+            if (zone <= 0 || safeZoneInterval <= 0) return false;
             return zone % safeZoneInterval == 0 && !IsSuperZone(zone);
         }
 
@@ -80,6 +100,7 @@ namespace WheelOfFortune.Data
 
         public int GetNextSafeZone(int currentZone)
         {
+            if (safeZoneInterval <= 0) return currentZone + 5;
             int next = ((currentZone / safeZoneInterval) + 1) * safeZoneInterval;
             while (IsSuperZone(next))
             {
@@ -90,6 +111,7 @@ namespace WheelOfFortune.Data
 
         public int GetNextSuperZone(int currentZone)
         {
+            if (superZoneInterval <= 0) return currentZone + 30;
             return ((currentZone / superZoneInterval) + 1) * superZoneInterval;
         }
 

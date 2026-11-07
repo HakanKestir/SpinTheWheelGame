@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 using WheelOfFortune.Data;
 
@@ -17,6 +17,8 @@ namespace WheelOfFortune.Editor
         private SerializedProperty multiplierIncrementIntervalProp;
         private SerializedProperty superZonePreviewRewardProp;
         private SerializedProperty reviveGoldCostProp;
+        private SerializedProperty reviveCostIncrementProp;
+        private SerializedProperty maxRevivesPerRunProp;
         private SerializedProperty initialCashProp;
         private SerializedProperty initialGoldProp;
 
@@ -32,6 +34,8 @@ namespace WheelOfFortune.Editor
             multiplierIncrementIntervalProp = serializedObject.FindProperty("multiplierIncrementInterval");
             superZonePreviewRewardProp = serializedObject.FindProperty("superZonePreviewReward");
             reviveGoldCostProp = serializedObject.FindProperty("reviveGoldCost");
+            reviveCostIncrementProp = serializedObject.FindProperty("reviveCostIncrement");
+            maxRevivesPerRunProp = serializedObject.FindProperty("maxRevivesPerRun");
             initialCashProp = serializedObject.FindProperty("initialCash");
             initialGoldProp = serializedObject.FindProperty("initialGold");
         }
@@ -71,7 +75,9 @@ namespace WheelOfFortune.Editor
             EditorGUILayout.Space(8);
 
             EditorGUILayout.LabelField("Economy & Revive", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(reviveGoldCostProp);
+            EditorGUILayout.PropertyField(reviveGoldCostProp, new GUIContent("Base Revive Gold Cost"));
+            EditorGUILayout.PropertyField(reviveCostIncrementProp, new GUIContent("Revive Cost Increment"));
+            EditorGUILayout.PropertyField(maxRevivesPerRunProp, new GUIContent("Max Revives Per Run"));
             EditorGUILayout.PropertyField(initialCashProp);
             EditorGUILayout.PropertyField(initialGoldProp);
 
