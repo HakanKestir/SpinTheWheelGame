@@ -298,37 +298,44 @@ namespace WheelOfFortune.Core
             RequestExitConfirmation();
         }
 
+        private bool isProcessingCashOut;
+
         public void ConfirmExitAndCashOut()
         {
+            if (isProcessingCashOut) return;
             if (currentState != GameState.ReadyToSpin && currentState != GameState.CashOut) return;
 
-            // Game flow level validation: strictly forbid exit if outside safe/super zones
-            if (zoneProgressionManager != null && !zoneProgressionManager.CanLeave)
+            // CanLeave is validated in RequestExitConfirmation before this modal is shown;
+            // re-checking here only produced spurious warnings after a zone reset.
+
+            isProcessingCashOut = true;
+            try
             {
-                Debug.LogWarning("[GameFlowManager] Cannot cash out outside of safe or super zones!");
-                return;
+                revivesUsedInRun = 0;
+                bombRewardSnapshot = null;
+
+                // 1. Bank cash and gold into permanent wallet (and items into vault)
+                if (playerInventoryManager != null)
+                {
+                    playerInventoryManager.BankRewardsToWallet();
+                }
+
+                // 2. Reset run progression and wheel to Zone 1
+                if (zoneProgressionManager != null)
+                {
+                    zoneProgressionManager.ResetToStart();
+                }
+                SetupCurrentZoneWheel();
+
+                // 3. Restore state to ready to spin
+                SetState(GameState.ReadyToSpin);
+                OnRunReset?.Invoke();
+                OnCashOutCompleted?.Invoke();
             }
-
-            revivesUsedInRun = 0;
-            bombRewardSnapshot = null;
-
-            // 1. Bank cash and gold into permanent wallet (and items into vault)
-            if (playerInventoryManager != null)
+            finally
             {
-                playerInventoryManager.BankRewardsToWallet();
+                isProcessingCashOut = false;
             }
-
-            // 2. Reset run progression and wheel to Zone 1
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.ResetToStart();
-            }
-            SetupCurrentZoneWheel();
-
-            // 3. Restore state to ready to spin
-            SetState(GameState.ReadyToSpin);
-            OnRunReset?.Invoke();
-            OnCashOutCompleted?.Invoke();
         }
 
         public void RestartNewRunAfterCashOut()

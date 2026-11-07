@@ -1565,7 +1565,7 @@ MonoBehaviour:
   ui_scroll_rect_rewards: {fileID: 1455592476}
   ui_transform_rewards_content: {fileID: 1127328764}
   ui_scrollbar_horizontal: {fileID: 0}
-  rewardCardPrefab: {fileID: 0}
+  rewardCardPrefab: {fileID: 6418051125384719933, guid: f1be1b3b249d67b43b1f4fa7a542dc2f, type: 3}
   ui_button_exit_cancel: {fileID: 954437044}
   ui_button_exit_confirm: {fileID: 1410373162}
   ui_button_cashout_claim: {fileID: 0}
