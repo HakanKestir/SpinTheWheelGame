@@ -67,7 +67,6 @@
     <Compile Include="Assets\Scripts\Core\ZoneProgressionManager.cs" />
     <Compile Include="Assets\Scripts\Core\GameState.cs" />
     <Compile Include="Assets\Scripts\Core\GameFlowManager.cs" />
-    <Compile Include="Assets\Scripts\Core\EventBus.cs" />
     <Compile Include="Assets\Scripts\Core\GameEvents.cs" />
     <Compile Include="Assets\Scripts\Data\WheelSliceConfig.cs" />
     <Compile Include="Assets\Scripts\Data\WheelTierType.cs" />
@@ -77,6 +76,7 @@
     <Compile Include="Assets\Scripts\UI\Zone\UIZoneNumberItemView.cs" />
     <Compile Include="Assets\Scripts\UI\Zone\UIZoneTrackerView.cs" />
     <Compile Include="Assets\Scripts\Data\RewardType.cs" />
+    <Compile Include="Assets\Scripts\Core\EventBus.cs" />
     <Compile Include="Assets\Scripts\Data\RewardDatabaseSO.cs" />
     <Compile Include="Assets\Scripts\UI\Rewards\UIRewardsTrayView.cs" />
     <Compile Include="Assets\Scripts\Data\WheelRuntimeModel.cs" />

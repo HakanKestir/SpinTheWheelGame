@@ -218,8 +218,7 @@ namespace WheelOfFortune.Core
             }
 
             SetState(GameState.BombEncounter);
-            OnBombHit?.Invoke();
-            EventBus.Publish();
+            EventBus.Publish(new BombHitEvent());
         }
 
         public void RequestReviveWithCurrency()
@@ -279,8 +278,7 @@ namespace WheelOfFortune.Core
             }
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);
-            OnRevived?.Invoke();
-            EventBus.Publish();
+            EventBus.Publish(new RevivedEvent());
         }
 
         public void RequestGiveUp()
@@ -294,8 +292,7 @@ namespace WheelOfFortune.Core
             zoneProgressionManager.ResetToStart();
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);
-            OnRunReset?.Invoke();
-            EventBus.Publish();
+            EventBus.Publish(new RunResetEvent());
         }
 
         public void RequestExitConfirmation()
@@ -308,8 +305,7 @@ namespace WheelOfFortune.Core
 #endif
                 return;
             }
-            OnExitConfirmationRequested?.Invoke();
-            EventBus.Publish();
+            EventBus.Publish(new ExitConfirmationRequestedEvent());
         }
 
         public void RequestExit()
@@ -370,10 +366,8 @@ namespace WheelOfFortune.Core
 
                 // 3. Restore state to ready to spin
                 SetState(GameState.ReadyToSpin);
-                OnRunReset?.Invoke();
-                EventBus.Publish();
-                OnCashOutCompleted?.Invoke();
-                EventBus.Publish();
+                EventBus.Publish(new RunResetEvent());
+                EventBus.Publish(new CashOutCompletedEvent());
             }
             finally
             {
