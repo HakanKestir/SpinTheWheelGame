@@ -129,10 +129,7 @@ namespace WheelOfFortune.UI.Wheel
             {
                 gameFlowManager.OnStateChanged += OnGameStateChanged;
             }
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged += OnZoneChanged;
-            }
+            EventBus.Subscribe<int>(OnZoneChanged);
         }
 
         protected override void UnregisterButtonCallbacks()
@@ -145,10 +142,7 @@ namespace WheelOfFortune.UI.Wheel
             {
                 gameFlowManager.OnStateChanged -= OnGameStateChanged;
             }
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged -= OnZoneChanged;
-            }
+            EventBus.Unsubscribe<int>(OnZoneChanged);
         }
 
         private void Start()

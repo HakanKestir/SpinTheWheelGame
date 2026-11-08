@@ -74,10 +74,7 @@ namespace WheelOfFortune.UI.Rewards
                 playerInventoryManager.OnRunRewardsRestored += OnRewardsRestored;
                 playerInventoryManager.OnRunRewardsBanked += OnRunRewardsBanked;
             }
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged += OnZoneChanged;
-            }
+            EventBus.Subscribe<int>(OnZoneChanged);
             if (gameFlowManager != null)
             {
                 gameFlowManager.OnStateChanged += OnGameStateChanged;
@@ -98,10 +95,7 @@ namespace WheelOfFortune.UI.Rewards
                 playerInventoryManager.OnRunRewardsRestored -= OnRewardsRestored;
                 playerInventoryManager.OnRunRewardsBanked -= OnRunRewardsBanked;
             }
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged -= OnZoneChanged;
-            }
+            EventBus.Unsubscribe<int>(OnZoneChanged);
             if (gameFlowManager != null)
             {
                 gameFlowManager.OnStateChanged -= OnGameStateChanged;

@@ -11,8 +11,6 @@ namespace WheelOfFortune.Core
 
         private WheelRuntimeModel activeWheelModel;
 
-        public event Action<int> OnZoneChanged;
-
         public ZoneConfigSO Config => zoneConfig;
         public int CurrentZone => currentZone;
         public bool IsSafeZone => zoneConfig != null && zoneConfig.IsSafeZone(currentZone);
@@ -29,26 +27,27 @@ namespace WheelOfFortune.Core
             zoneConfig = config;
             currentZone = startingZone;
             GenerateWheelModel();
-            OnZoneChanged?.Invoke(currentZone);
+            EventBus.Publish(currentZone);
         }
 
         public void AdvanceZone()
         {
             currentZone++;
             GenerateWheelModel();
-            OnZoneChanged?.Invoke(currentZone);
+            EventBus.Publish(currentZone);
         }
 
         public void ResetToStart()
         {
             currentZone = 1;
             GenerateWheelModel();
-            OnZoneChanged?.Invoke(currentZone);
+            EventBus.Publish(currentZone);
         }
 
         public void RefreshCurrentZoneWheel()
         {
             GenerateWheelModel();
+            EventBus.Publish(currentZone);
         }
 
         private void GenerateWheelModel()

@@ -119,18 +119,12 @@ namespace WheelOfFortune.UI.Zone
 
         protected override void RegisterButtonCallbacks()
         {
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged += OnZoneChanged;
-            }
+            EventBus.Subscribe<int>(OnZoneChanged);
         }
 
         protected override void UnregisterButtonCallbacks()
         {
-            if (zoneProgressionManager != null)
-            {
-                zoneProgressionManager.OnZoneChanged -= OnZoneChanged;
-            }
+            EventBus.Unsubscribe<int>(OnZoneChanged);
         }
 
         private void Start()
