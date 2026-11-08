@@ -65,7 +65,9 @@ namespace WheelOfFortune.Core
             if (isSpinning) return;
             if (wheelRotatorTransform == null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogError("[WheelSpinController] wheelRotatorTransform is not assigned!");
+#endif
                 return;
             }
 

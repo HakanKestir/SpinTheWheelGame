@@ -14,9 +14,11 @@ namespace WheelOfFortune.Core
         [SerializeField] private PlayerInventoryManager playerInventoryManager;
         [SerializeField] private WheelOfFortune.UI.Wheel.UIWheelView wheelView;
 
+#if UNITY_EDITOR
         [Header("Editor Debug / Testing")]
         [Tooltip("Set to 0-7 to force a specific slice index, or -1 for random")]
         [SerializeField] private int forceSliceIndex = -1;
+#endif
 
         private GameState currentState = GameState.ReadyToSpin;
         private int revivesUsedInRun = 0;
@@ -106,16 +108,20 @@ namespace WheelOfFortune.Core
             var wheelModel = zoneProgressionManager.ActiveWheelModel;
             if (wheelModel == null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogError("[GameFlowManager] No active wheel model for current zone!");
+#endif
                 return;
             }
 
             int targetIndex;
+#if UNITY_EDITOR
             if (forceSliceIndex >= 0 && forceSliceIndex < wheelModel.SliceCount)
             {
                 targetIndex = forceSliceIndex;
             }
             else
+#endif
             {
                 targetIndex = wheelModel.SelectRandomSliceIndex();
             }
@@ -133,7 +139,9 @@ namespace WheelOfFortune.Core
 
             if (winningSlice == null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogError($"[GameFlowManager] Invalid slice at index {winningIndex}");
+#endif
                 SetState(GameState.ReadyToSpin);
                 return;
             }
@@ -218,7 +226,9 @@ namespace WheelOfFortune.Core
 
             if (!CanReviveInRun)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning("[GameFlowManager] Maximum revives reached for this run!");
+#endif
                 return;
             }
 
@@ -230,7 +240,9 @@ namespace WheelOfFortune.Core
             }
             else
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning("[GameFlowManager] Not enough gold to revive!");
+#endif
             }
         }
 
@@ -287,7 +299,9 @@ namespace WheelOfFortune.Core
             if (currentState != GameState.ReadyToSpin) return;
             if (zoneProgressionManager != null && !zoneProgressionManager.CanLeave)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning("[GameFlowManager] Exit not allowed at this zone (safe or super zones only)!");
+#endif
                 return;
             }
             OnExitConfirmationRequested?.Invoke();
