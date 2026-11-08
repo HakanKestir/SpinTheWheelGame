@@ -63,9 +63,10 @@ namespace WheelOfFortune.Data
 
         /// <summary>
         /// Dynamically creates a pure runtime wheel model for the specified zone.
-        /// Scales reward amounts according to the zone progression curve without mutating this ScriptableObject.
+        /// Slice amounts stay at their base values; the zone multiplier is applied once
+        /// when the wheel is displayed and when a reward is paid out.
         /// </summary>
-        public WheelRuntimeModel CreateRuntimeModelForZone(int zone, AnimationCurve progressionCurve = null)
+        public WheelRuntimeModel CreateRuntimeModelForZone(int zone)
         {
             if (rewardPool == null || rewardPool.Count == 0)
             {
@@ -103,17 +104,6 @@ namespace WheelOfFortune.Data
             int neededRewardCount = includeBomb ? SliceCount - 1 : SliceCount;
             var selectedEntries = PickDistinctWeightedEntries(nonBombCandidates, neededRewardCount);
 
-            float zoneMultiplier = 1f;
-            if (progressionCurve != null && progressionCurve.length > 0)
-            {
-                zoneMultiplier = Mathf.Max(1f, progressionCurve.Evaluate(zone));
-            }
-            else if (zone > 1)
-            {
-                // Default progression curve: ~5% gain per zone
-                zoneMultiplier = 1f + ((zone - 1) * 0.05f);
-            }
-
             var runtimeSlices = new List<WheelSliceConfig>(SliceCount);
             int rewardPickIndex = 0;
 
@@ -136,8 +126,7 @@ namespace WheelOfFortune.Data
                     if (rewardPickIndex < selectedEntries.Count)
                     {
                         var entry = selectedEntries[rewardPickIndex++];
-                        int scaledAmount = ScaleAmountForZone(entry.RewardItem, entry.BaseAmount, zoneMultiplier);
-                        slice.SetConfig(entry.RewardItem, scaledAmount, entry.Weight);
+                        slice.SetConfig(entry.RewardItem, entry.BaseAmount, entry.Weight);
                     }
                 }
 
@@ -145,18 +134,6 @@ namespace WheelOfFortune.Data
             }
 
             return new WheelRuntimeModel(tierType, wheelBaseSprite, indicatorSprite, runtimeSlices, zone);
-        }
-
-        private int ScaleAmountForZone(RewardItemSO item, int baseAmount, float zoneMultiplier)
-        {
-            if (item == null || baseAmount <= 0) return baseAmount;
-
-            if (baseAmount == 1 && (item.RewardType == RewardType.Weapon || item.RewardType == RewardType.Chest || item.RewardType == RewardType.Cosmetic))
-            {
-                return 1;
-            }
-
-            return Mathf.Max(1, Mathf.RoundToInt(baseAmount * zoneMultiplier));
         }
 
         /// <summary>

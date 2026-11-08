@@ -188,12 +188,12 @@ namespace WheelOfFortune.UI.Wheel
             }
         }
 
-        public void UpdateWheelDisplay(WheelConfigSO config, int zoneMultiplier)
+        public void UpdateWheelDisplay(WheelConfigSO config, float zoneMultiplier)
         {
             UpdateWheelDisplay((IWheelModel)config, zoneMultiplier);
         }
 
-        public void UpdateWheelDisplay(IWheelModel config, int zoneMultiplier)
+        public void UpdateWheelDisplay(IWheelModel config, float zoneMultiplier)
         {
             if (config == null) return;
 
@@ -257,8 +257,10 @@ namespace WheelOfFortune.UI.Wheel
                         break;
                     case WheelTierType.Bronze:
                     default:
-                        int mult = Mathf.Max(1, zoneMultiplier);
-                        ui_text_wheel_subtitle_value.text = mult > 1 ? $"Up To x{mult} Rewards" : "Spin to Win!";
+                        float mult = Mathf.Max(1f, zoneMultiplier);
+                        ui_text_wheel_subtitle_value.text = mult > 1.001f
+                            ? $"Up To x{mult.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)} Rewards"
+                            : "Spin to Win!";
                         ui_text_wheel_subtitle_value.color = new Color(0.92f, 0.92f, 0.92f, 0.9f); // Crisp Silver White
                         break;
                 }

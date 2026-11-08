@@ -85,7 +85,7 @@ namespace WheelOfFortune.Core
             if (zoneProgressionManager == null || wheelSpinController == null) return;
 
             var wheelModel = zoneProgressionManager.ActiveWheelModel;
-            int multiplier = zoneProgressionManager.CurrentMultiplier;
+            float multiplier = zoneProgressionManager.CurrentMultiplier;
 
             wheelSpinController.Initialize(wheelModel, multiplier);
 
@@ -152,7 +152,7 @@ namespace WheelOfFortune.Core
             }
             else
             {
-                int multiplier = zoneProgressionManager.CurrentMultiplier;
+                float multiplier = zoneProgressionManager.CurrentMultiplier;
                 int wonAmount = winningSlice.GetAmount(multiplier);
                 var wonItem = winningSlice.RewardItem;
 

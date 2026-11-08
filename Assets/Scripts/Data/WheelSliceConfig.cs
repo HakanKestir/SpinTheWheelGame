@@ -13,13 +13,22 @@ namespace WheelOfFortune.Data
         public RewardItemSO RewardItem => rewardItem;
         public int Weight => Mathf.Max(1, weight);
 
-        public int GetAmount(int zoneMultiplier = 1)
+        public int GetAmount(float zoneMultiplier = 1f)
         {
             if (rewardItem == null) return 0;
             if (rewardItem.IsBomb) return 0;
-            
+
             int baseVal = overrideAmount > 0 ? overrideAmount : rewardItem.BaseAmount;
-            return baseVal * Mathf.Max(1, zoneMultiplier);
+
+            // Equipment rewards are counted in pieces, not multiplied.
+            if (baseVal == 1 && (rewardItem.RewardType == RewardType.Weapon ||
+                                 rewardItem.RewardType == RewardType.Chest ||
+                                 rewardItem.RewardType == RewardType.Cosmetic))
+            {
+                return 1;
+            }
+
+            return Mathf.Max(1, Mathf.RoundToInt(baseVal * Mathf.Max(1f, zoneMultiplier)));
         }
 
         public bool IsBomb => rewardItem != null && rewardItem.IsBomb;

@@ -71,7 +71,7 @@ The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode 
 
 ### 2. Zone Progression & Reward Multipliers
 - Progressive zone tracker displays current zone number, completed zones, upcoming safe/super milestones, and right-hand milestone badges.
-- **Configurable Multipliers:** Reward multiplication escalates by +1x every $N$ zones (e.g. 1x at Z1–Z4, 2x at Z5–Z8, etc.) or can be toggled off directly in `MainZoneConfig.asset`.
+- **Configurable Multipliers:** Reward scaling follows the `Zone Progression Curve` in `MainZoneConfig.asset` (1x at Zone 1 up to 6x at Zone 60) and can be toggled off there.
 - **Super Zone Target Preview:** Preview badge in the header shows the upcoming Super Zone grand prize.
 
 ### 3. Bomb Encounter & Revive Options

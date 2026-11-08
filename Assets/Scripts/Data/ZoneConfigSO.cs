@@ -22,9 +22,6 @@ namespace WheelOfFortune.Data
         [Tooltip("Toggle to enable or disable reward multiplication as player progresses")]
         [SerializeField] private bool enableRewardMultiplication = true;
 
-        [Tooltip("Number of zones before the reward multiplier increments by +1 (e.g. 4 means multiplier increases every 4 zones)")]
-        [SerializeField] private int multiplierIncrementInterval = 4;
-
         [Header("Zone Progression Scaling Curve")]
         [Tooltip("Curve defining base reward scaling as zone advances (X: zone, Y: amount multiplier).")]
         [SerializeField] private AnimationCurve zoneProgressionCurve = new AnimationCurve(
@@ -58,15 +55,13 @@ namespace WheelOfFortune.Data
         public WheelConfigSO GoldenWheelConfig => goldenWheelConfig;
         public bool RestrictExitToSafeZones => restrictExitToSafeZones;
         public bool EnableRewardMultiplication => enableRewardMultiplication;
-        public int MultiplierIncrementInterval => multiplierIncrementInterval;
-        public AnimationCurve ZoneProgressionCurve => zoneProgressionCurve;
         public RewardItemSO SuperZonePreviewReward => superZonePreviewReward;
 
         public WheelRuntimeModel CreateWheelModelForZone(int zone)
         {
             var config = GetWheelConfigForZone(zone);
             if (config == null) return null;
-            return config.CreateRuntimeModelForZone(zone, zoneProgressionCurve);
+            return config.CreateRuntimeModelForZone(zone);
         }
         public int ReviveGoldCost => reviveGoldCost;
         public int ReviveCostIncrement => reviveCostIncrement;
@@ -133,13 +128,13 @@ namespace WheelOfFortune.Data
             return ((currentZone / superZoneInterval) + 1) * superZoneInterval;
         }
 
-        public int GetRewardMultiplierForZone(int zone)
+        public float GetRewardMultiplierForZone(int zone)
         {
-            if (!enableRewardMultiplication || multiplierIncrementInterval <= 0)
+            if (!enableRewardMultiplication || zoneProgressionCurve == null || zoneProgressionCurve.length == 0)
             {
-                return 1;
+                return 1f;
             }
-            return 1 + Mathf.Max(0, zone - 1) / multiplierIncrementInterval;
+            return Mathf.Max(1f, zoneProgressionCurve.Evaluate(zone));
         }
 
         public void Setup(WheelConfigSO bronze, WheelConfigSO silver, WheelConfigSO gold, RewardItemSO superReward)
@@ -150,10 +145,9 @@ namespace WheelOfFortune.Data
             superZonePreviewReward = superReward;
         }
 
-        public void SetMultiplicationSettings(bool enableMultiplication, int interval)
+        public void SetMultiplicationSettings(bool enableMultiplication)
         {
             enableRewardMultiplication = enableMultiplication;
-            multiplierIncrementInterval = Mathf.Max(1, interval);
         }
 
         public void SetExitRestriction(bool restrict)

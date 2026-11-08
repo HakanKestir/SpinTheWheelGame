@@ -31,7 +31,7 @@ namespace WheelOfFortune.UI.Wheel
         protected override void RegisterButtonCallbacks() { }
         protected override void UnregisterButtonCallbacks() { }
 
-        public void SetData(WheelSliceConfig slice, int zoneMultiplier)
+        public void SetData(WheelSliceConfig slice, float zoneMultiplier)
         {
             if (slice == null || slice.RewardItem == null)
             {

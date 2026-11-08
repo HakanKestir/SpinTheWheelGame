@@ -14,7 +14,6 @@ namespace WheelOfFortune.Editor
         private SerializedProperty silverWheelConfigProp;
         private SerializedProperty goldenWheelConfigProp;
         private SerializedProperty enableRewardMultiplicationProp;
-        private SerializedProperty multiplierIncrementIntervalProp;
         private SerializedProperty zoneProgressionCurveProp;
         private SerializedProperty superZonePreviewRewardProp;
         private SerializedProperty reviveGoldCostProp;
@@ -32,7 +31,6 @@ namespace WheelOfFortune.Editor
             silverWheelConfigProp = serializedObject.FindProperty("silverWheelConfig");
             goldenWheelConfigProp = serializedObject.FindProperty("goldenWheelConfig");
             enableRewardMultiplicationProp = serializedObject.FindProperty("enableRewardMultiplication");
-            multiplierIncrementIntervalProp = serializedObject.FindProperty("multiplierIncrementInterval");
             zoneProgressionCurveProp = serializedObject.FindProperty("zoneProgressionCurve");
             superZonePreviewRewardProp = serializedObject.FindProperty("superZonePreviewReward");
             reviveGoldCostProp = serializedObject.FindProperty("reviveGoldCost");
@@ -62,16 +60,13 @@ namespace WheelOfFortune.Editor
             EditorGUILayout.PropertyField(enableRewardMultiplicationProp, new GUIContent("Enable Reward Multiplication"));
 
             EditorGUI.BeginDisabledGroup(!enableRewardMultiplicationProp.boolValue);
-            EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(multiplierIncrementIntervalProp, new GUIContent("Multiplier Increment Interval (Zones)"));
+            EditorGUILayout.PropertyField(zoneProgressionCurveProp, new GUIContent("Zone Progression Curve"));
             if (!enableRewardMultiplicationProp.boolValue)
             {
                 EditorGUILayout.HelpBox("Reward multiplication is disabled. Multiplier remains at 1x across all zones.", MessageType.Info);
             }
-            EditorGUI.indentLevel--;
             EditorGUI.EndDisabledGroup();
 
-            EditorGUILayout.PropertyField(zoneProgressionCurveProp, new GUIContent("Zone Progression Curve"));
             EditorGUILayout.Space(8);
 
             EditorGUILayout.LabelField("Super Zone Preview", EditorStyles.boldLabel);

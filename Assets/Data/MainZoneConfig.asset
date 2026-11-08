@@ -19,7 +19,6 @@ MonoBehaviour:
   goldenWheelConfig: {fileID: 11400000, guid: 56117210f3ca22b4bb370567ed15dea0, type: 2}
   restrictExitToSafeZones: 1
   enableRewardMultiplication: 1
-  multiplierIncrementInterval: 4
   superZonePreviewReward: {fileID: 11400000, guid: 3ebec2b27e3a9f9429b22a601f4a8298, type: 2}
   reviveGoldCost: 25
   initialCash: 1000

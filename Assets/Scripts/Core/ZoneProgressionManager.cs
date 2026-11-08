@@ -22,7 +22,7 @@ namespace WheelOfFortune.Core
         public int NextSuperZone => zoneConfig != null ? zoneConfig.GetNextSuperZone(currentZone) : 30;
         public WheelConfigSO ActiveWheelConfig => zoneConfig != null ? zoneConfig.GetWheelConfigForZone(currentZone) : null;
         public IWheelModel ActiveWheelModel => activeWheelModel != null ? activeWheelModel : (IWheelModel)ActiveWheelConfig;
-        public int CurrentMultiplier => zoneConfig != null ? zoneConfig.GetRewardMultiplierForZone(currentZone) : 1;
+        public float CurrentMultiplier => zoneConfig != null ? zoneConfig.GetRewardMultiplierForZone(currentZone) : 1f;
 
         public void Initialize(ZoneConfigSO config, int startingZone = 1)
         {

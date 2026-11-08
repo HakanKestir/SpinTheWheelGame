@@ -23,7 +23,7 @@ namespace WheelOfFortune.Core
         [SerializeField] private float indicatorTickDuration = 0.12f;
 
         private IWheelModel currentModel;
-        private int currentZoneMultiplier = 1;
+        private float currentZoneMultiplier = 1f;
         private bool isSpinning;
         private Tween currentSpinTween;
         private Tween currentIndicatorTween;
@@ -39,7 +39,7 @@ namespace WheelOfFortune.Core
         public event Action<int> OnSlicePassed;
         public event Action<int> OnSpinCompleted;
 
-        public void Initialize(IWheelModel wheelModel, int zoneMultiplier)
+        public void Initialize(IWheelModel wheelModel, float zoneMultiplier)
         {
             currentModel = wheelModel;
             currentZoneMultiplier = zoneMultiplier;
@@ -55,7 +55,7 @@ namespace WheelOfFortune.Core
             }
         }
 
-        public void Initialize(WheelConfigSO config, int zoneMultiplier)
+        public void Initialize(WheelConfigSO config, float zoneMultiplier)
         {
             Initialize((IWheelModel)config, zoneMultiplier);
         }

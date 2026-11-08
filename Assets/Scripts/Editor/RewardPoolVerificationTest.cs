@@ -67,26 +67,26 @@ namespace WheelOfFortune.Editor
 
             // 5. Test Multiplier Logic in ZoneConfigSO
             var zoneConfig = AssetDatabase.LoadAssetAtPath<ZoneConfigSO>("Assets/Data/MainZoneConfig.asset");
-            zoneConfig.SetMultiplicationSettings(true, 4);
-            int m1 = zoneConfig.GetRewardMultiplierForZone(1); // 1x
-            int m4 = zoneConfig.GetRewardMultiplierForZone(4); // 1x
-            int m5 = zoneConfig.GetRewardMultiplierForZone(5); // 2x
-            int m9 = zoneConfig.GetRewardMultiplierForZone(9); // 3x
-            int m29 = zoneConfig.GetRewardMultiplierForZone(29); // 8x
+            zoneConfig.SetMultiplicationSettings(true);
+            float m1 = zoneConfig.GetRewardMultiplierForZone(1);
+            float m5 = zoneConfig.GetRewardMultiplierForZone(5);
+            float m10 = zoneConfig.GetRewardMultiplierForZone(10);
+            float m30 = zoneConfig.GetRewardMultiplierForZone(30);
+            float m60 = zoneConfig.GetRewardMultiplierForZone(60);
 
-            if (m1 != 1 || m4 != 1 || m5 != 2 || m9 != 3 || m29 != 8)
+            if (!(m1 <= m5 && m5 <= m10 && m10 <= m30 && m30 <= m60 && m60 > m30))
             {
-                Debug.LogError($"[VerificationTest] FAILED: Multiplier calculation incorrect. Z1={m1}, Z4={m4}, Z5={m5}, Z9={m9}, Z29={m29}");
+                Debug.LogError($"[VerificationTest] FAILED: Multiplier curve is not increasing. Z1={m1}, Z5={m5}, Z10={m10}, Z30={m30}, Z60={m60}");
                 return;
             }
-            Debug.Log($"[VerificationTest] PASSED: Multiplier scaling enabled (Z1={m1}x, Z5={m5}x, Z9={m9}x, Z29={m29}x).");
+            Debug.Log($"[VerificationTest] PASSED: Zone curve scaling enabled (Z1={m1:0.##}x, Z5={m5:0.##}x, Z10={m10:0.##}x, Z30={m30:0.##}x, Z60={m60:0.##}x).");
 
             // Test Multiplier Disabled
-            zoneConfig.SetMultiplicationSettings(false, 4);
-            int mDis1 = zoneConfig.GetRewardMultiplierForZone(1);
-            int mDis5 = zoneConfig.GetRewardMultiplierForZone(5);
-            int mDis29 = zoneConfig.GetRewardMultiplierForZone(29);
-            if (mDis1 != 1 || mDis5 != 1 || mDis29 != 1)
+            zoneConfig.SetMultiplicationSettings(false);
+            float mDis1 = zoneConfig.GetRewardMultiplierForZone(1);
+            float mDis5 = zoneConfig.GetRewardMultiplierForZone(5);
+            float mDis29 = zoneConfig.GetRewardMultiplierForZone(29);
+            if (!Mathf.Approximately(mDis1, 1f) || !Mathf.Approximately(mDis5, 1f) || !Mathf.Approximately(mDis29, 1f))
             {
                 Debug.LogError($"[VerificationTest] FAILED: Disabled multiplier did not return 1x. Z1={mDis1}, Z5={mDis5}, Z29={mDis29}");
                 return;
@@ -94,25 +94,26 @@ namespace WheelOfFortune.Editor
             Debug.Log("[VerificationTest] PASSED: Disabled multiplier returns 1x across all zones.");
 
             // Restore enabled
-            zoneConfig.SetMultiplicationSettings(true, 4);
+            zoneConfig.SetMultiplicationSettings(true);
             // 6. Test Zone-Based Reward Scaling (Zone 29 vs Zone 1)
-            var modelZ1 = bronze.CreateRuntimeModelForZone(1, zoneConfig.ZoneProgressionCurve);
-            var modelZ29 = bronze.CreateRuntimeModelForZone(29, zoneConfig.ZoneProgressionCurve);
+            var model = bronze.CreateRuntimeModelForZone(1);
 
-            if (modelZ1.SliceCount != WheelConfigSO.SliceCount || modelZ29.SliceCount != WheelConfigSO.SliceCount)
+            if (model.SliceCount != WheelConfigSO.SliceCount)
             {
-                Debug.LogError("[VerificationTest] FAILED: Runtime wheel models slice count mismatch!");
+                Debug.LogError("[VerificationTest] FAILED: Runtime wheel model slice count mismatch!");
                 return;
             }
 
+            float multZ1 = zoneConfig.GetRewardMultiplierForZone(1);
+            float multZ29 = zoneConfig.GetRewardMultiplierForZone(29);
             int totalAmountZ1 = 0;
             int totalAmountZ29 = 0;
             for (int i = 0; i < WheelConfigSO.SliceCount; i++)
             {
-                var s1 = modelZ1.GetSlice(i);
-                var s29 = modelZ29.GetSlice(i);
-                if (s1 != null && !s1.IsBomb) totalAmountZ1 += s1.GetAmount(1);
-                if (s29 != null && !s29.IsBomb) totalAmountZ29 += s29.GetAmount(1);
+                var slice = model.GetSlice(i);
+                if (slice == null || slice.IsBomb) continue;
+                totalAmountZ1 += slice.GetAmount(multZ1);
+                totalAmountZ29 += slice.GetAmount(multZ29);
             }
 
             if (totalAmountZ29 <= totalAmountZ1)
@@ -120,7 +121,7 @@ namespace WheelOfFortune.Editor
                 Debug.LogError($"[VerificationTest] FAILED: Zone 29 rewards ({totalAmountZ29}) did not scale higher than Zone 1 ({totalAmountZ1})!");
                 return;
             }
-            Debug.Log($"[VerificationTest] PASSED: Zone progression scaling active. Total base rewards at Z1={totalAmountZ1} -> Z29={totalAmountZ29} (~{totalAmountZ29 / (float)totalAmountZ1:F1}x).");
+            Debug.Log($"[VerificationTest] PASSED: Zone progression scaling active. Total rewards at Z1={totalAmountZ1} -> Z29={totalAmountZ29} (~{totalAmountZ29 / (float)totalAmountZ1:F1}x).");
 
             Debug.Log("[VerificationTest] ★ ALL TESTS PASSED SUCCESSFULLY! ★");
         }
