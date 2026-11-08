@@ -319,8 +319,30 @@ namespace WheelOfFortune.Core
             if (isProcessingCashOut) return;
             if (currentState != GameState.ReadyToSpin && currentState != GameState.CashOut) return;
 
-            // CanLeave is validated in RequestExitConfirmation before this modal is shown;
-            // re-checking here only produced spurious warnings after a zone reset.
+            // The UI disables the exit button outside safe zones, but the flow must
+            // enforce the rule as well so a direct call cannot bypass it.
+            if (zoneProgressionManager != null && !zoneProgressionManager.CanLeave)
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning("[GameFlowManager] Exit rejected: current zone is not a safe or super zone.");
+#endif
+                return;
+            }
+
+            CashOutAndReset();
+        }
+
+        public void RestartNewRunAfterCashOut()
+        {
+            // Restarting after a completed cash-out is not an exit attempt, so the
+            // safe-zone restriction does not apply here.
+            CashOutAndReset();
+        }
+
+        private void CashOutAndReset()
+        {
+            if (isProcessingCashOut) return;
+            if (currentState != GameState.ReadyToSpin && currentState != GameState.CashOut) return;
 
             isProcessingCashOut = true;
             try
@@ -350,11 +372,6 @@ namespace WheelOfFortune.Core
             {
                 isProcessingCashOut = false;
             }
-        }
-
-        public void RestartNewRunAfterCashOut()
-        {
-            ConfirmExitAndCashOut();
         }
 
         private void SetState(GameState newState)

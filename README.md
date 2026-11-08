@@ -54,7 +54,7 @@ The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode 
 | Exit & Secure Loot Confirmation | Bomb Encounter (Death / Revive) | Winner Celebration Card Popup |
 | :---: | :---: | :---: |
 | <img src="docs/screenshots/modal_exit_cashout.png" width="100%" alt="Exit Modal" /> | <img src="docs/screenshots/modal_bomb.png" width="100%" alt="Bomb Modal" /> | <img src="docs/screenshots/reward_celebration.png" width="100%" alt="Celebration Popup" /> |
-| *Side-scrolling tray of banked vault loot* | *Revive via 25 Gold, Bonus Ad, or Give Up* | *Dynamic flying currency particles & punch anim* |
+| *Side-scrolling tray of banked vault loot* | *Revive with escalating Gold cost, dev bonus revive, or Give Up* | *Dynamic flying currency particles & punch anim* |
 
 ---
 
@@ -76,8 +76,8 @@ The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode 
 
 ### 3. Bomb Encounter & Revive Options
 When landing on a bomb slice:
-1. **Revive with Gold:** Spend 25 Gold to disarm the bomb, keep all collected loot, and advance to the next zone.
-2. **Revive Bonus:** Free evaluation revive option for reviewers.
+1. **Revive with Gold:** Spend 25 Gold (increasing with each revive used in the run) to disarm the bomb, keep all collected loot, and spin again in the **same zone**.
+2. **Revive Bonus:** Free evaluation revive, available in the Editor and development builds only.
 3. **Give Up:** Forfeit all rewards collected in the current run and reset to Zone 1.
 
 ### 4. Exit Rules & Permanent Vault Banking
