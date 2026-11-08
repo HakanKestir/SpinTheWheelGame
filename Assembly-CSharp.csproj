@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Core\GameState.cs" />
     <Compile Include="Assets\Scripts\Core\GameFlowManager.cs" />
     <Compile Include="Assets\Scripts\Core\EventBus.cs" />
+    <Compile Include="Assets\Scripts\Core\GameEvents.cs" />
     <Compile Include="Assets\Scripts\Data\WheelSliceConfig.cs" />
     <Compile Include="Assets\Scripts\Data\WheelTierType.cs" />
     <Compile Include="Assets\Scripts\Data\WheelConfigSO.cs" />

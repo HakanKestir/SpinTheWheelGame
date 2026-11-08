@@ -32,18 +32,12 @@ namespace WheelOfFortune.UI.Header
 
         protected override void RegisterButtonCallbacks()
         {
-            if (playerInventoryManager != null)
-            {
-                playerInventoryManager.OnWalletBalanceChanged += OnBalanceChanged;
-            }
+            EventBus.Subscribe<WalletBalanceChangedEvent>(OnBalanceChanged);
         }
 
         protected override void UnregisterButtonCallbacks()
         {
-            if (playerInventoryManager != null)
-            {
-                playerInventoryManager.OnWalletBalanceChanged -= OnBalanceChanged;
-            }
+            EventBus.Unsubscribe<WalletBalanceChangedEvent>(OnBalanceChanged);
         }
 
         private void Start()
@@ -54,9 +48,9 @@ namespace WheelOfFortune.UI.Header
             }
         }
 
-        private void OnBalanceChanged(int cash, int gold)
+        private void OnBalanceChanged(WalletBalanceChangedEvent evt)
         {
-            UpdateBalances(cash, gold);
+            UpdateBalances(evt.Cash, evt.Gold);
         }
 
         public void UpdateBalances(int cash, int gold)

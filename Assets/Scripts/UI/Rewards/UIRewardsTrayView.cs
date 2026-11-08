@@ -67,13 +67,10 @@ namespace WheelOfFortune.UI.Rewards
             {
                 ui_button_exit.onClick.AddListener(OnExitClicked);
             }
-            if (playerInventoryManager != null)
-            {
-                playerInventoryManager.OnRewardAddedToRun += OnRewardAdded;
-                playerInventoryManager.OnRunRewardsCleared += OnRewardsCleared;
-                playerInventoryManager.OnRunRewardsRestored += OnRewardsRestored;
-                playerInventoryManager.OnRunRewardsBanked += OnRunRewardsBanked;
-            }
+            EventBus.Subscribe<RewardAddedEvent>(OnRewardAdded);
+            EventBus.Subscribe<RunRewardsClearedEvent>(OnRewardsCleared);
+            EventBus.Subscribe<RunRewardsRestoredEvent>(OnRewardsRestored);
+            EventBus.Subscribe<RunRewardsBankedEvent>(OnRunRewardsBanked);
             EventBus.Subscribe<int>(OnZoneChanged);
             if (gameFlowManager != null)
             {
@@ -88,13 +85,10 @@ namespace WheelOfFortune.UI.Rewards
             {
                 ui_button_exit.onClick.RemoveListener(OnExitClicked);
             }
-            if (playerInventoryManager != null)
-            {
-                playerInventoryManager.OnRewardAddedToRun -= OnRewardAdded;
-                playerInventoryManager.OnRunRewardsCleared -= OnRewardsCleared;
-                playerInventoryManager.OnRunRewardsRestored -= OnRewardsRestored;
-                playerInventoryManager.OnRunRewardsBanked -= OnRunRewardsBanked;
-            }
+            EventBus.Unsubscribe<RewardAddedEvent>(OnRewardAdded);
+            EventBus.Unsubscribe<RunRewardsClearedEvent>(OnRewardsCleared);
+            EventBus.Unsubscribe<RunRewardsRestoredEvent>(OnRewardsRestored);
+            EventBus.Unsubscribe<RunRewardsBankedEvent>(OnRunRewardsBanked);
             EventBus.Unsubscribe<int>(OnZoneChanged);
             if (gameFlowManager != null)
             {
@@ -278,7 +272,7 @@ namespace WheelOfFortune.UI.Rewards
             ui_button_exit.interactable = isReady && isZoneAllowed;
         }
 
-        private void OnRunRewardsBanked(IReadOnlyList<CollectedRewardEntry> bankedRewards)
+        private void OnRunRewardsBanked(RunRewardsBankedEvent evt)
         {
             ClearTraySlots();
         }
@@ -289,17 +283,17 @@ namespace WheelOfFortune.UI.Rewards
             UpdateExitButtonState();
         }
 
-        private void OnRewardAdded(RewardItemSO item, int amount)
+        private void OnRewardAdded(RewardAddedEvent evt)
         {
-            RebuildTraySlots(item != null ? item.Id : null);
+            RebuildTraySlots(evt.Item != null ? evt.Item.Id : null);
         }
 
-        private void OnRewardsCleared()
+        private void OnRewardsCleared(RunRewardsClearedEvent evt)
         {
             ClearTraySlots();
         }
 
-        private void OnRewardsRestored()
+        private void OnRewardsRestored(RunRewardsRestoredEvent evt)
         {
             RebuildTraySlots(null);
         }

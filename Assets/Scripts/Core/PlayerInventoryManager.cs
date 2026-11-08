@@ -67,6 +67,7 @@ namespace WheelOfFortune.Core
             }
 
             OnRewardAddedToRun?.Invoke(item, amount);
+            EventBus.Publish(new RewardAddedEvent(item, amount));
         }
 
         public void ClearRunRewards()
@@ -74,6 +75,7 @@ namespace WheelOfFortune.Core
             currentRunRewards.Clear();
             runRewardLookup.Clear();
             OnRunRewardsCleared?.Invoke();
+            EventBus.Publish(new RunRewardsClearedEvent());
         }
 
         /// <summary>
@@ -111,6 +113,7 @@ namespace WheelOfFortune.Core
             }
 
             OnRunRewardsRestored?.Invoke();
+            EventBus.Publish(new RunRewardsRestoredEvent());
         }
 
         public int GetPendingRunCash()
@@ -176,6 +179,9 @@ namespace WheelOfFortune.Core
             OnWalletBalanceChanged?.Invoke(permanentCash, permanentGold);
             OnRunRewardsBanked?.Invoke(snapshot);
             OnRunRewardsCleared?.Invoke();
+            EventBus.Publish(new WalletBalanceChangedEvent(permanentCash, permanentGold));
+            EventBus.Publish(new RunRewardsBankedEvent(snapshot));
+            EventBus.Publish(new RunRewardsClearedEvent());
         }
 
         public bool CanAffordGold(int cost)
@@ -189,6 +195,7 @@ namespace WheelOfFortune.Core
             {
                 permanentGold -= cost;
                 OnWalletBalanceChanged?.Invoke(permanentCash, permanentGold);
+                EventBus.Publish(new WalletBalanceChangedEvent(permanentCash, permanentGold));
                 return true;
             }
             return false;
@@ -198,12 +205,14 @@ namespace WheelOfFortune.Core
         {
             permanentGold += Mathf.Max(0, amount);
             OnWalletBalanceChanged?.Invoke(permanentCash, permanentGold);
+            EventBus.Publish(new WalletBalanceChangedEvent(permanentCash, permanentGold));
         }
 
         public void AddCash(int amount)
         {
             permanentCash += Mathf.Max(0, amount);
             OnWalletBalanceChanged?.Invoke(permanentCash, permanentGold);
+            EventBus.Publish(new WalletBalanceChangedEvent(permanentCash, permanentGold));
         }
     }
 }
