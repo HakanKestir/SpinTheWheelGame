@@ -166,10 +166,7 @@ namespace WheelOfFortune.UI.Modals
                 ui_button_cashout_claim.onClick.AddListener(OnConfirmExitClicked);
             }
 
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnExitConfirmationRequested += ShowModal;
-            }
+            EventBus.Subscribe<ExitConfirmationRequestedEvent>(OnExitConfirmationRequested);
         }
 
         protected override void UnregisterButtonCallbacks()
@@ -187,11 +184,10 @@ namespace WheelOfFortune.UI.Modals
                 ui_button_cashout_claim.onClick.RemoveListener(OnConfirmExitClicked);
             }
 
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnExitConfirmationRequested -= ShowModal;
-            }
+            EventBus.Unsubscribe<ExitConfirmationRequestedEvent>(OnExitConfirmationRequested);
         }
+
+        private void OnExitConfirmationRequested(ExitConfirmationRequestedEvent evt) => ShowModal();
 
 
         public void InitializeScrollBox()

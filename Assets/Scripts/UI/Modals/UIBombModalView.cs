@@ -104,12 +104,9 @@ namespace WheelOfFortune.UI.Modals
                 ui_button_revive_bonus.onClick.AddListener(OnReviveBonusClicked);
             }
 
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnBombHit += ShowModal;
-                gameFlowManager.OnRevived += HideModal;
-                gameFlowManager.OnRunReset += HideModal;
-            }
+            EventBus.Subscribe<BombHitEvent>(OnBombHit);
+            EventBus.Subscribe<RevivedEvent>(OnRevived);
+            EventBus.Subscribe<RunResetEvent>(OnRunReset);
         }
 
         protected override void UnregisterButtonCallbacks()
@@ -127,13 +124,14 @@ namespace WheelOfFortune.UI.Modals
                 ui_button_revive_bonus.onClick.RemoveListener(OnReviveBonusClicked);
             }
 
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnBombHit -= ShowModal;
-                gameFlowManager.OnRevived -= HideModal;
-                gameFlowManager.OnRunReset -= HideModal;
-            }
+            EventBus.Unsubscribe<BombHitEvent>(OnBombHit);
+            EventBus.Unsubscribe<RevivedEvent>(OnRevived);
+            EventBus.Unsubscribe<RunResetEvent>(OnRunReset);
         }
+
+        private void OnBombHit(BombHitEvent evt) => ShowModal();
+        private void OnRevived(RevivedEvent evt) => HideModal();
+        private void OnRunReset(RunResetEvent evt) => HideModal();
 
         private void Start()
         {

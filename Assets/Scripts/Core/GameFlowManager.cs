@@ -158,6 +158,7 @@ namespace WheelOfFortune.Core
 
                 SetState(GameState.RewardAwarded);
                 OnRewardWon?.Invoke(winningSlice, wonAmount);
+                EventBus.Publish(new RewardWonEvent(winningSlice, wonAmount));
 
                 if (rewardCardPopupView != null)
                 {
@@ -218,6 +219,7 @@ namespace WheelOfFortune.Core
 
             SetState(GameState.BombEncounter);
             OnBombHit?.Invoke();
+            EventBus.Publish();
         }
 
         public void RequestReviveWithCurrency()
@@ -278,6 +280,7 @@ namespace WheelOfFortune.Core
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);
             OnRevived?.Invoke();
+            EventBus.Publish();
         }
 
         public void RequestGiveUp()
@@ -292,6 +295,7 @@ namespace WheelOfFortune.Core
             SetupCurrentZoneWheel();
             SetState(GameState.ReadyToSpin);
             OnRunReset?.Invoke();
+            EventBus.Publish();
         }
 
         public void RequestExitConfirmation()
@@ -305,6 +309,7 @@ namespace WheelOfFortune.Core
                 return;
             }
             OnExitConfirmationRequested?.Invoke();
+            EventBus.Publish();
         }
 
         public void RequestExit()
@@ -366,7 +371,9 @@ namespace WheelOfFortune.Core
                 // 3. Restore state to ready to spin
                 SetState(GameState.ReadyToSpin);
                 OnRunReset?.Invoke();
+                EventBus.Publish();
                 OnCashOutCompleted?.Invoke();
+                EventBus.Publish();
             }
             finally
             {
@@ -378,6 +385,7 @@ namespace WheelOfFortune.Core
         {
             currentState = newState;
             OnStateChanged?.Invoke(currentState);
+            EventBus.Publish(currentState);
         }
 
         public void SetReferences(WheelSpinController spinner, ZoneProgressionManager zoneMgr, PlayerInventoryManager invMgr, WheelOfFortune.UI.Rewards.UIRewardCardPopupView cardPopup = null, WheelOfFortune.UI.Wheel.UIWheelView uiWheel = null)

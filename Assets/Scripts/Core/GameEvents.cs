@@ -52,4 +52,43 @@ namespace WheelOfFortune.Core
             Gold = gold;
         }
     }
+
+    /// <summary>Published when the game state changes.</summary>
+    public readonly struct StateChangedEvent
+    {
+        public GameState NewState { get; }
+
+        public StateChangedEvent(GameState newState)
+        {
+            NewState = newState;
+        }
+    }
+
+    /// <summary>Published when a wheel spin awards a reward.</summary>
+    public readonly struct RewardWonEvent
+    {
+        public WheelSliceConfig Slice { get; }
+        public int Amount { get; }
+
+        public RewardWonEvent(WheelSliceConfig slice, int amount)
+        {
+            Slice = slice;
+            Amount = amount;
+        }
+    }
+
+    /// <summary>Published when a bomb is hit.</summary>
+    public readonly struct BombHitEvent { }
+
+    /// <summary>Published when the player revives.</summary>
+    public readonly struct RevivedEvent { }
+
+    /// <summary>Published when the run is reset.</summary>
+    public readonly struct RunResetEvent { }
+
+    /// <summary>Published when cash-out is completed.</summary>
+    public readonly struct CashOutCompletedEvent { }
+
+    /// <summary>Published when exit confirmation is requested.</summary>
+    public readonly struct ExitConfirmationRequestedEvent { }
 }

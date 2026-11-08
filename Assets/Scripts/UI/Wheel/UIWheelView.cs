@@ -130,6 +130,7 @@ namespace WheelOfFortune.UI.Wheel
                 gameFlowManager.OnStateChanged += OnGameStateChanged;
             }
             EventBus.Subscribe<int>(OnZoneChanged);
+            EventBus.Subscribe<GameState>(OnGameStateChanged);
         }
 
         protected override void UnregisterButtonCallbacks()
@@ -143,6 +144,7 @@ namespace WheelOfFortune.UI.Wheel
                 gameFlowManager.OnStateChanged -= OnGameStateChanged;
             }
             EventBus.Unsubscribe<int>(OnZoneChanged);
+            EventBus.Unsubscribe<GameState>(OnGameStateChanged);
         }
 
         private void Start()

@@ -72,11 +72,8 @@ namespace WheelOfFortune.UI.Rewards
             EventBus.Subscribe<RunRewardsRestoredEvent>(OnRewardsRestored);
             EventBus.Subscribe<RunRewardsBankedEvent>(OnRunRewardsBanked);
             EventBus.Subscribe<int>(OnZoneChanged);
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnStateChanged += OnGameStateChanged;
-                gameFlowManager.OnRunReset += OnRunReset;
-            }
+            EventBus.Subscribe<GameState>(OnGameStateChanged);
+            EventBus.Subscribe<RunResetEvent>(OnRunReset);
         }
 
         protected override void UnregisterButtonCallbacks()
@@ -90,11 +87,8 @@ namespace WheelOfFortune.UI.Rewards
             EventBus.Unsubscribe<RunRewardsRestoredEvent>(OnRewardsRestored);
             EventBus.Unsubscribe<RunRewardsBankedEvent>(OnRunRewardsBanked);
             EventBus.Unsubscribe<int>(OnZoneChanged);
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.OnStateChanged -= OnGameStateChanged;
-                gameFlowManager.OnRunReset -= OnRunReset;
-            }
+            EventBus.Unsubscribe<GameState>(OnGameStateChanged);
+            EventBus.Unsubscribe<RunResetEvent>(OnRunReset);
         }
 
         public void InitializeView()
@@ -277,7 +271,7 @@ namespace WheelOfFortune.UI.Rewards
             ClearTraySlots();
         }
 
-        private void OnRunReset()
+        private void OnRunReset(RunResetEvent evt)
         {
             ClearTraySlots();
             UpdateExitButtonState();
