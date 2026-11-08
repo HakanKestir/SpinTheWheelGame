@@ -5,7 +5,7 @@ using WheelOfFortune.Data;
 
 namespace WheelOfFortune.Core
 {
-    public class WheelSpinController : MonoBehaviour, IWheelSpinController
+    public class WheelSpinController : MonoBehaviour
     {
         [Header("Transforms")]
         [Tooltip("Child transform that rotates (keeping root transform clean)")]
