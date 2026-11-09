@@ -247,17 +247,6 @@ namespace WheelOfFortune.Core
             }
         }
 
-        public void RequestReviveBonus()
-        {
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            if (currentState != GameState.BombEncounter) return;
-            // Bonus revive for demo evaluation in dev / editor builds
-            ExecuteRevive();
-#else
-            Debug.LogWarning("[GameFlowManager] Bonus revive is disabled in release builds.");
-#endif
-        }
-
         private void ExecuteRevive()
         {
             // Revive: restore the run rewards forfeited by the bomb and allow re-spinning

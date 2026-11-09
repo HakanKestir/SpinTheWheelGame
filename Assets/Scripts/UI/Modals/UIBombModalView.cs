@@ -17,7 +17,6 @@ namespace WheelOfFortune.UI.Modals
         [Header("Buttons")]
         [SerializeField] private Button ui_button_give_up;
         [SerializeField] private Button ui_button_revive_currency;
-        [SerializeField] private Button ui_button_revive_bonus;
 
         [Header("Texts (Ending with _value)")]
         [SerializeField] private TextMeshProUGUI ui_text_revive_cost_value;
@@ -55,10 +54,6 @@ namespace WheelOfFortune.UI.Modals
             {
                 ui_button_revive_currency = FindButtonByName("ui_button_revive_currency");
             }
-            if (ui_button_revive_bonus == null)
-            {
-                ui_button_revive_bonus = FindButtonByName("ui_button_revive_bonus");
-            }
             if (ui_text_revive_cost_value == null)
             {
                 ui_text_revive_cost_value = FindTextByName("ui_text_revive_cost_value");
@@ -74,7 +69,7 @@ namespace WheelOfFortune.UI.Modals
             }
 
             // Keep the modal's buttons clickable regardless of the global raycast optimizer.
-            foreach (Button button in new[] { ui_button_give_up, ui_button_revive_currency, ui_button_revive_bonus })
+            foreach (Button button in new[] { ui_button_give_up, ui_button_revive_currency })
             {
                 if (button == null) continue;
                 Image buttonImage = button.GetComponent<Image>();
@@ -99,11 +94,6 @@ namespace WheelOfFortune.UI.Modals
             {
                 ui_button_revive_currency.onClick.AddListener(OnReviveCurrencyClicked);
             }
-            if (ui_button_revive_bonus != null)
-            {
-                ui_button_revive_bonus.onClick.AddListener(OnReviveBonusClicked);
-            }
-
             EventBus.Subscribe<BombHitEvent>(OnBombHit);
             EventBus.Subscribe<RevivedEvent>(OnRevived);
             EventBus.Subscribe<RunResetEvent>(OnRunReset);
@@ -119,11 +109,6 @@ namespace WheelOfFortune.UI.Modals
             {
                 ui_button_revive_currency.onClick.RemoveListener(OnReviveCurrencyClicked);
             }
-            if (ui_button_revive_bonus != null)
-            {
-                ui_button_revive_bonus.onClick.RemoveListener(OnReviveBonusClicked);
-            }
-
             EventBus.Unsubscribe<BombHitEvent>(OnBombHit);
             EventBus.Unsubscribe<RevivedEvent>(OnRevived);
             EventBus.Unsubscribe<RunResetEvent>(OnRunReset);
@@ -161,13 +146,6 @@ namespace WheelOfFortune.UI.Modals
                     ui_button_revive_currency.interactable = canRevive && canAfford;
                 }
             }
-
-#if !DEVELOPMENT_BUILD && !UNITY_EDITOR
-            if (ui_button_revive_bonus != null)
-            {
-                ui_button_revive_bonus.gameObject.SetActive(false);
-            }
-#endif
 
             // Pop-in animation
             if (ui_transform_bomb_modal_anim_container != null)
@@ -235,12 +213,5 @@ namespace WheelOfFortune.UI.Modals
             }
         }
 
-        private void OnReviveBonusClicked()
-        {
-            if (gameFlowManager != null)
-            {
-                gameFlowManager.RequestReviveBonus();
-            }
-        }
     }
 }

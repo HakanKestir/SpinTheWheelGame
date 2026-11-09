@@ -16,7 +16,6 @@
 - 📦 **Direct APK File:** [`Release.apk`](Release.apk) *(41.8 MB, Android Release build)*
 - 🎬 **Gameplay Video:** [Watch Demonstration](#-gameplay-video-demonstration)
 - 📱 **Multi-Aspect Ratio Support:** [Screenshots (20:9, 16:9, 4:3)](#-responsive-multi-aspect-ratio-support)
-- 🧪 **Editor Test Suite:** [Automated Verification](#-automated-testing--verification)
 
 ---
 
@@ -54,7 +53,7 @@ The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode 
 | Exit & Secure Loot Confirmation | Bomb Encounter (Death / Revive) | Winner Celebration Card Popup |
 | :---: | :---: | :---: |
 | <img src="docs/screenshots/modal_exit_cashout.png" width="100%" alt="Exit Modal" /> | <img src="docs/screenshots/modal_bomb.png" width="100%" alt="Bomb Modal" /> | <img src="docs/screenshots/reward_celebration.png" width="100%" alt="Celebration Popup" /> |
-| *Side-scrolling tray of banked vault loot* | *Revive with escalating Gold cost, dev bonus revive, or Give Up* | *Dynamic flying currency particles & punch anim* |
+| *Side-scrolling tray of banked vault loot* | *Revive with escalating Gold cost or Give Up* | *Dynamic flying currency particles & punch anim* |
 
 ---
 
@@ -77,8 +76,7 @@ The UI is built with a single responsive Canvas Scaler set to **`Expand`** mode 
 ### 3. Bomb Encounter & Revive Options
 When landing on a bomb slice:
 1. **Revive with Gold:** Spend 25 Gold (increasing with each revive used in the run) to disarm the bomb, keep all collected loot, and spin again in the **same zone**.
-2. **Revive Bonus:** Free evaluation revive, available in the Editor and development builds only.
-3. **Give Up:** Forfeit all rewards collected in the current run and reset to Zone 1.
+2. **Give Up:** Forfeit all rewards collected in the current run and reset to Zone 1.
 
 ### 4. Exit Rules & Permanent Vault Banking
 - **Safe Zone Exit Restriction:** Can be enabled/disabled via `Restrict Exit To Safe/Super Zones` in `MainZoneConfig.asset`. When enabled, the player can only exit at Safe (5, 10...) or Super (30) zones; the Exit button is disabled outside safe zones.
@@ -99,7 +97,6 @@ Assets/
 ├── Scripts/
 │   ├── Core/             # Domain & Managers (GameFlowManager, ZoneProgressionManager, PlayerInventoryManager, WheelSpinController)
 │   ├── Data/             # ScriptableObject definitions (RewardItemSO, WheelConfigSO, ZoneConfigSO)
-│   ├── Editor/           # Custom Inspectors & Automated Verification Suites
 │   └── UI/
 │       ├── Common/       # UIAutoBinder (Reflection-free automatic UI wiring & raycast optimizers)
 │       ├── Header/       # Top header, currency indicators, super zone preview
@@ -115,32 +112,6 @@ Assets/
 - **Separated Animator Transforms:** UI animators (such as `UISpinButtonAnimator`) animate child content transforms rather than root transforms, preventing layout corruption and layout recalculation spikes.
 - **9-Slice Sprite Precision:** Exact border parameters configured on frames to prevent stretching and 9-slice warnings.
 - **Memory & Draw Call Batching:** All wheel elements, icons, and frames are batched under `WheelGameAtlas.spriteatlas`.
-
----
-
-## 🧪 Automated Testing & Verification
-
-Custom Editor test runners are included under the Unity top menu bar:
-
-### 1. Exit Modal & Banking Test Suite
-- **Menu:** `Wheel Of Fortune` > `Run Exit Modal & Banking Tests`
-- **Script:** [`ExitModalVerificationTest.cs`](Assets/Scripts/Editor/ExitModalVerificationTest.cs)
-- **Validates:**
-  - Safe Zone exit restriction logic (`CanLeaveAtZone(1)` vs `CanLeaveAtZone(5)` and `CanLeaveAtZone(30)`).
-  - 1st-click exit button responsiveness and prompt display.
-  - Run loot retention during prompt.
-  - Accurate currency banking to permanent wallet.
-  - Non-currency item retention in persistent vault.
-  - Zone and state resets upon cashing out.
-
-### 2. Reward Pool & Multiplier Test Suite
-- **Menu:** `Wheel Of Fortune` > `Run Dynamic Wheel & Multiplier Tests`
-- **Script:** [`RewardPoolVerificationTest.cs`](Assets/Scripts/Editor/RewardPoolVerificationTest.cs)
-- **Validates:**
-  - All 20 items in `RewardDatabaseSO`.
-  - Dynamic Bronze rolling (exactly 1 bomb and 7 rewards).
-  - Safe and Super wheel integrity (0 bombs across trials).
-  - Multiplier increment intervals and disabled toggle behavior.
 
 ---
 
